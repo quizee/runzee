@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "466077268041",
+    "firebase_url": "https://my-running-31fee.firebaseio.com",
+    "project_id": "my-running-31fee",
+    "storage_bucket": "my-running-31fee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466077268041:android:ea26e529caf63459",
+        "android_client_info": {
+          "package_name": "com.example.myrunzeeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466077268041-36t2g5ggejnu87n8cn7hf5bkvf9qs5ge.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myrunzeeapp",
+            "certificate_hash": "2a2ce299cf39974b1b27e53a998a592986c304e2"
+          }
+        },
+        {
+          "client_id": "466077268041-19kbgjgme9u140a96tnll0l9nuhukkpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUZdtMOP6JiqBdUZT49SrTkjt2POzfrkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466077268041-19kbgjgme9u140a96tnll0l9nuhukkpd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id = "@+id/deleteOrModify"
+        android:icon="@drawable/ic_three_dots_24dp"
+        android:title="deleteOrModify"
+        app:showAsAction="ifRoom">
+        <menu>
+        <item android:id = "@+id/modify"
+            android:title="러닝 편집"
+            app:showAsAction="never"/>
+        <item android:id = "@+id/delete"
+            android:title="삭제"
+            app:showAsAction="never"/>
+        </menu>
+    </item>
+</menu>

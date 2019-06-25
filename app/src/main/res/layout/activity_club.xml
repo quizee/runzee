@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ClubActivity">
+
+    <android.support.design.widget.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabs">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tabItem1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="러닝 크루" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tabItem2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="나의 챌린지" />
+
+    </android.support.design.widget.TabLayout>
+
+
+    <LinearLayout
+        android:id="@+id/search_friend_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFFFFF" />
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="10dp"
+            app:searchBackIcon="@drawable/ic_arrow_back_black_24dp"
+            app:searchBackground="@color/colorWhite"
+            app:searchSuggestionBackground="@color/colorWhite" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/friend_recycler"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="171dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="회원님을 위한 추천"
+        android:textSize="18sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/crew_recycler"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="164dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/linear_toolbar" />
+
+</LinearLayout>

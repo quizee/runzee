@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.myrunzeeapp">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- network provider와 gps provider를 사용하기 위한 권한 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".CheerActivity"></activity>
+        <activity android:name=".RequestMessageActivity" />
+        <activity android:name=".MakeFriendActivity" />
+        <activity android:name=".InviteFriendActivity" />
+        <activity android:name=".MakeChallengeActivity" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".MyChallengeActivity" />
+        <activity android:name=".MachineTodayActivity" />
+        <activity android:name=".TakePhotoActivity" />
+        <activity android:name=".CameraPreviewActivity" />
+        <activity android:name=".RunEditActivity" />
+        <activity
+            android:name=".ReallyDeleteActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".RunAddActivity" />
+        <activity android:name=".MedalActivity" />
+        <activity android:name=".CountDownActivity" />
+        <activity android:name=".ReadyPlanActivity" />
+        <activity android:name=".PlanActivity" />
+        <activity android:name=".MenuActivity" />
+        <activity android:name=".EventActivity3" />
+        <activity
+            android:name=".PauseActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".TodayActivity" />
+        <activity android:name=".TimerActivity" />
+        <activity android:name=".EventActivity2" />
+        <activity android:name=".EventActivity1" />
+        <activity
+            android:name=".EventActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".NotifActivity" />
+        <activity android:name=".ClubActivity" />
+        <activity android:name=".AddRecordActivity" />
+        <activity android:name=".RecordActivity" />
+        <activity android:name=".ProfileActivity" />
+        <activity
+            android:name=".ReadyActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+
+        <service android:name=".MyTimerService" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBpTBVZoNUaxlKZBPO-TNatALQ_STPmtb4" />
+
+        <activity
+            android:name=".GoogleMapsActivity"
+            android:label="@string/title_activity_google_maps" />
+    </application>
+
+</manifest>

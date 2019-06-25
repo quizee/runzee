@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/account_lt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_account_gray_24dp" />
+
+    <ImageView
+        android:id="@+id/record_lt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_storage_gray_24dp" />
+
+    <ImageView
+        android:id="@+id/startrun_lt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_directions_run_gray_24dp" />
+
+    <ImageView
+        android:id="@+id/group_lt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_group_gray_24dp" />
+
+    <ImageView
+        android:id="@+id/notification_lt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_notifications_gray_24dp" />
+
+</LinearLayout>

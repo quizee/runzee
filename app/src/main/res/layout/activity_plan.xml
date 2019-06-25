@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PlanActivity">
+
+    <TextView
+        android:id="@+id/plan_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="플랜 설정"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/first_planner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="안녕하세요,"
+        android:textSize="12sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/frequency_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="주간 러닝 횟수" />
+
+            <LinearLayout
+                android:id="@+id/fequency_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+            <TextView
+                android:id="@+id/level_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="활동 레벨" />
+
+            <LinearLayout
+                android:id="@+id/level_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/info_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="내 정보" />
+
+            <LinearLayout
+                android:id="@+id/info_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <android.support.design.widget.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabs">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tabItem1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="달성 기록" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tabItem2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="획득 벨트" />
+
+    </android.support.design.widget.TabLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="508dp"
+        android:orientation="vertical"
+        android:paddingTop="30dp">
+
+        <ImageView
+            android:id="@+id/my_level"
+            android:layout_width="171dp"
+            android:layout_height="151dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp"
+            map:srcCompat="@drawable/white_belt" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/record_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/linear_toolbar"
+        />
+
+</LinearLayout>

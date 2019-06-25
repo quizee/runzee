@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MakeChallengeActivity">
+
+    <TextView
+        android:id="@+id/makechallenge_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="챌린지 만들기"
+        android:textColor="#0C0808" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/wait_progressbar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cover_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="0.8"
+            android:orientation="horizontal" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/challenge_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0.3"
+        android:ems="10"
+        android:hint="챌린지 제목"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/challenge_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="거리 선택"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/challenge_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="시작 날짜"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/challenge_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="종료 날짜"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/friend_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0.3"
+        android:ems="10"
+        android:hint="친구 추가"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:enabled="false"
+        android:text="챌린지 만들기" />
+</LinearLayout>

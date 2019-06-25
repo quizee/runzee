@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="512dp">
+
+        <ImageView
+            android:id="@+id/runflow_image"
+            android:layout_width="match_parent"
+            android:layout_height="501dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/runner_image" />
+
+        <TextView
+            android:id="@+id/signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="20dp"
+            android:background="#C8FDF7F7"
+            android:gravity="center"
+            android:text="RUNZEE와 함께 달려봅시다!"
+            android:textColor="#010A13"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            tools:layout_editor_absoluteX="38dp"
+            tools:layout_editor_absoluteY="116dp" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="가입하기" />
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="로그인" />
+    </LinearLayout>
+</LinearLayout>

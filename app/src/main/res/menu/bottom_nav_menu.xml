@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/go_record"
+        android:enabled="true"
+        android:icon="@drawable/ic_arrow_back_black_24dp"
+        android:title="확인 완료"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/go_takephoto"
+        android:enabled="true"
+        android:title="러닝 남기기"
+        android:icon="@drawable/ic_camera_black_24dp"
+        app:showAsAction="ifRoom" />
+
+</menu>
