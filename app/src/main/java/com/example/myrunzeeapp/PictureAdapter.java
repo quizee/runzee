@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.MyPictur
     ArrayList<PictureData> pictureList = new ArrayList<>();
     PictureItemClickListener itemClickListener;
     Context context;
+    FirebaseAuth auth;
 
     public PictureAdapter(ArrayList<PictureData> list, Context context){
         this.pictureList = list;
@@ -55,16 +58,45 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.MyPictur
         double kilometer = pictureData.getWhat_kilometer();
         int blurFrom = 1;
 
-        holder.what_belt.setText(level);
-        holder.what_kilometer.setText(String.format("%.2f",kilometer)+" 킬로미터");
+        String show_level = "";
+        switch(level){
+            case "white":
+                show_level = "화이트 벨트";
+                break;
+            case "yellow":
+                 show_level ="옐로우 벨트";
+                 break;
+            case "blue":
+                show_level ="블루 벨트";
+                break;
+            case "purple":
+                show_level ="퍼플 벨트";
+                break;
+            case "black":
+                show_level = "블랙 벨트";
+                break;
+            case "red":
+                show_level = "레드 벨트";
+                break;
+            default: break;
+        }
+        holder.what_belt.setText(show_level);
+        if(level.equals("white")) {
+            holder.what_kilometer.setText("");
+        }else{
+            holder.what_kilometer.setText(String.format("%.2f", kilometer) + " 킬로미터");
+        }
         holder.medal_picture.setImageResource(medal_id);
 
         SharedPreferences runListPref;
-        if(LoginActivity.my_info != null) {
-            runListPref = context.getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
-        }else{
-            runListPref = context.getSharedPreferences(context.getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""),Activity.MODE_PRIVATE);
-        }
+//        if(LoginActivity.my_info != null) {
+//            runListPref = context.getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
+//        }else{
+//            runListPref = context.getSharedPreferences(context.getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""),Activity.MODE_PRIVATE);
+//        }
+        auth = FirebaseAuth.getInstance();
+        runListPref = context.getSharedPreferences(auth.getCurrentUser().getEmail(),Activity.MODE_PRIVATE);
+
         if(runListPref != null){
             Float total_distance = runListPref.getFloat("total_distance",-1);
             if(total_distance != -1){

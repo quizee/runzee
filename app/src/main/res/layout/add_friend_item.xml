@@ -9,6 +9,9 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:src="@drawable/ic_account_black_24dp" />
 
@@ -18,25 +21,16 @@
         android:layout_height="match_parent"
         android:layout_weight="3"
         android:gravity="center|start"
-        android:paddingLeft="10dp"
+        android:paddingLeft="20dp"
         android:text="TextView"
         android:textColor="#EE0C0B0B" />
 
-    <TextView
-        android:id="@+id/know_eachother"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:text="0명의 서로 아는 친구" />
-
-    <TextView
-        android:id="@+id/state"
+    <CheckBox
+        android:id="@+id/invite_friend"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:text="친구 신청"
-        android:textColor="#E80D257C" />
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:paddingRight="15dp"
+        android:text="초대" />
 
 </LinearLayout>

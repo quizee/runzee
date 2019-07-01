@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity{
     EditText password_login;
     String name_info;
     CheckBox auto_login;
-    static HashMap<String, String> my_info;
+    //static HashMap<String, String> my_info;
     private FirebaseAuth mAuth;
 
     @Override
@@ -85,24 +85,8 @@ public class LoginActivity extends AppCompatActivity{
                 String email_input = email_login.getText().toString();
                 String password_input = password_login.getText().toString();
                 login(email_input, password_input);
-
-//                SharedPreferences pref = getSharedPreferences("pref", Activity.MODE_PRIVATE);
-//                if ((pref != null) && (pref.contains(email_input))) {
-//                    json_info = pref.getString(email_input,"");// 이 이메일에 해당하는 정보를 가져온다
-//                    Type type = new TypeToken<HashMap<String,String>>() {
-//                    }.getType();
-//                    my_info =  gson.fromJson(json_info,type);
-//                    Log.e("여기야 여기!!!!!!!!", "이메일: "+ email_input);
-//                    Log.e("여기야 여기!!!!!!!!!!!!!!", "그 이메일로 부터 얻은 값: "+ json_info);
-//                    password_info = my_info.get("password");
-//                    name_info = my_info.get("name");
-//                    LoginActivity.my_info = my_info;
-//                    LoginActivity.my_info.put("email",email_input);
-//                    SharedPreferences runList = getSharedPreferences(email_input,Activity.MODE_PRIVATE);
-//                    //Log.e("여기야 여기!!!", "onClick: ", );
-//                }
-            }
-        });
+    }
+});
 
         TextView gotoRegister =  (TextView) findViewById(R.id.gotoRegister);
         gotoRegister.setOnClickListener(new View.OnClickListener(){
@@ -129,6 +113,7 @@ public class LoginActivity extends AppCompatActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -160,19 +145,4 @@ public class LoginActivity extends AppCompatActivity{
             finish();
         }
     }
-
-
-/*
-    public JsonObject restoredata(String emailKey) {
-        SharedPreferences pref = getSharedPreferences("pref", Activity.MODE_PRIVATE);
-        if ((pref != null) && (pref.contains("email_info"))) {
-            String info = pref.getString(emailKey, "");//그 이메일이 있으면 스트링 불러옴
-            Log.e("로그인할 때 잘 넘어오나?", info);
-            JsonParser jsonParser = new JsonParser();//스트링을 다시 객체로 만든다.
-            JsonObject jsonObject = (JsonObject) jsonParser.parse(info);
-            return jsonObject;
-        }
-        return null;
-    }
-*/
 }

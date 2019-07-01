@@ -15,4 +15,14 @@ public class MessageItem implements Serializable {
         this.contents = contents;
         this.msg = msg;
     }
+    @Override
+    public boolean equals(Object obj) {
+        MessageItem msgItem = (MessageItem) obj;
+        if (obj instanceof MessageItem) {
+            if(msgItem.msg.message_uid.equals(msg.message_uid)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

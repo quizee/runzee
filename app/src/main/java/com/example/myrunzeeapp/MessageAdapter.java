@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 
     ArrayList<MessageItem> messageItems = new ArrayList<>();
     Context context;
-    private long time_now = System.currentTimeMillis();
+    public long time_now = System.currentTimeMillis();
     public final static int request_code = 6;
     public final static int cheer_code = 7;
 
@@ -31,11 +33,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
+        ConstraintLayout message;
         TextView msg_content;
         TextView time_ago;
         ImageView sender_profile;
         public MyViewHolder(View itemView){
             super(itemView);
+            message = itemView.findViewById(R.id.message);
             msg_content = itemView.findViewById(R.id.msg_content);
             time_ago = itemView.findViewById(R.id.time_ago);
             sender_profile = itemView.findViewById(R.id.sender_profile);
@@ -58,22 +62,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         //내용
         myViewHolder.msg_content.setText(messageItems.get(i).contents);
 
-        //지난 시간
+        //지난 (ms)
         long passed_time = time_now - messageItems.get(i).msg.when_made;
-        SimpleDateFormat time_format = new SimpleDateFormat("MM-dd-HH-mm");
-        String string_time = time_format.format(passed_time);
-        String words[] = string_time.split("-");
+        //분으로 환산
+        passed_time = passed_time/60000;
 
         String time_ago = "";
-        if (Integer.parseInt(words[0]) > 0) {//월이 있다면
-            time_ago = words[0] + "달 전";
-        } else if (Integer.parseInt(words[1]) > 0) {//일이 있다면
-            time_ago = words[1] + "일 전";
-        } else if(Integer.parseInt(words[2])>0){//시간이 있다면
-            time_ago = words[2]+"시간 전";
-        } else if(Integer.parseInt(words[3])>0){//분이 있다면
-            time_ago = words[3]+"분 전";
+        if ((passed_time/1440)>0) {//일이 있다면
+            time_ago = passed_time/1440 + "일 전";
+        } else if ((passed_time/60) > 0) {//시간이 있다면
+            time_ago = passed_time/60 + "시간 전";
+        } else if((passed_time>0)){
+            time_ago = passed_time+"분 전";
+        } else{
+            time_ago = "방금";
         }
+
+        Log.e("NotifActivity time", "onBindViewHolder: "+passed_time+"분 흘렀음" );
         myViewHolder.time_ago.setText(time_ago);
 
         //클릭했을 때 내용
@@ -107,6 +112,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public int getItemCount() {
         return messageItems.size();
+    }
+
+    public void removeItem(int position){
+        messageItems.remove(position);
+        notifyItemRemoved(position);
     }
 
 

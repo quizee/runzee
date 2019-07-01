@@ -132,7 +132,7 @@ public class EditProfileActivity extends AppCompatActivity {
         what_kg.setText(String.valueOf(weight));
 
 
-        TextWatcher textWatcher = new TextWatcher() {
+        final TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -170,6 +170,31 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
         });
+        gender_radio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                what_cm.removeTextChangedListener(textWatcher);
+                what_kg.removeTextChangedListener(textWatcher);//잠깐 리스너 무시
+                switch(checkedId){
+                    case R.id.wm_btn:
+                        if(use_default.isChecked()){
+                            what_cm.setText("161");
+                            what_kg.setText("56");
+                        }
+                        break;
+                    case R.id.m_btn:
+                        if(use_default.isChecked()){
+                            what_cm.setText("173");
+                            what_kg.setText("68");
+                        }
+                        break;
+                        default: break;
+                }
+                what_cm.addTextChangedListener(textWatcher);
+                what_kg.addTextChangedListener(textWatcher);//다시 리스너 부착
+            }
+        });
+
 
         //권한
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="7'14''"
+            android:text="0'00''"
             android:textSize="20sp" />
 
         <TextView
@@ -105,15 +105,8 @@
         android:layout_width="182dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="90dp"
         android:text="잠시 휴식"
         android:textSize="40sp" />
-
-    <Button
-        android:id="@+id/temp_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="서비스 진행 상황보기(핸들러배우고 없앨 예정)"
-        android:textSize="18sp" />
 
 </LinearLayout>

@@ -26,16 +26,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CheerActivity"></activity>
+        <activity android:name=".BeltFriendActivity"/>
+        <activity android:name=".CreatedChallengeActivity" />
+        <activity android:name=".AddFriendActivity" />
+        <activity android:name=".CheerActivity" />
         <activity android:name=".RequestMessageActivity" />
-        <activity android:name=".MakeFriendActivity" />
-        <activity android:name=".InviteFriendActivity" />
         <activity android:name=".MakeChallengeActivity" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".MyChallengeActivity" />
         <activity android:name=".MachineTodayActivity" />
         <activity android:name=".TakePhotoActivity" />
-        <activity android:name=".CameraPreviewActivity" />
         <activity android:name=".RunEditActivity" />
         <activity
             android:name=".ReallyDeleteActivity"

@@ -12,6 +12,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -27,9 +29,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -67,6 +77,11 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
 
     //이메일 키
     String emailKey;
+
+    //firebase
+    FirebaseDatabase database;
+    FirebaseAuth auth;
+
     public class ReadyLocationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
@@ -172,6 +187,9 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         start_btn = (Button) findViewById(R.id.start_btn);
         emailKey = getIntent().getStringExtra("email");
 
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+
         //권한 설정
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
@@ -186,12 +204,13 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
 
         SharedPreferences runListPref;
         //평소 평균 목표 시간을 디폴트로 설정
-        if(LoginActivity.my_info != null) {
-            runListPref = getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
-        }else{
-            SharedPreferences auto = getSharedPreferences("auto",Activity.MODE_PRIVATE);
-            runListPref = getSharedPreferences(auto.getString("auto_email",""),Activity.MODE_PRIVATE);
-        }
+//        if(LoginActivity.my_info != null) {
+//            runListPref = getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
+//        }else{
+//            SharedPreferences auto = getSharedPreferences("auto",Activity.MODE_PRIVATE);
+//            runListPref = getSharedPreferences(auto.getString("auto_email",""),Activity.MODE_PRIVATE);
+//        }
+        runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(),Activity.MODE_PRIVATE);
         if (runListPref != null) {
             averageTime = runListPref.getInt("average_time",0);
             averageDistance = runListPref.getFloat("average_distance",0.0f);
@@ -243,6 +262,7 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
             }
         });
 
+
         //기본 하단 상단 화면 세팅
          setToolbarMenu();
          setTabLayout(0);
@@ -280,6 +300,7 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
                 startActivity(intent);
             }
         }
+
     }
 
     @Override
@@ -312,7 +333,7 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e("ReadyActivity", "start - 레디" );
+
     }
 
 }

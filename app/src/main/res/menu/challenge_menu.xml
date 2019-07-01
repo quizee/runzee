@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/outOrInvite"
+    android:icon="@drawable/ic_more_horiz_white_24dp"
+    android:title="OutOrInvite"
+    app:showAsAction="ifRoom">
+        <menu>
+            <item android:id = "@+id/getout"
+                android:title="챌린지 나가기"
+                app:showAsAction="never"/>
+            <item android:id = "@+id/invite"
+                android:title="친구 초대"
+                app:showAsAction="never"/>
+         </menu>
+    </item>
+</menu>

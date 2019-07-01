@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,7 +33,11 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -50,6 +56,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MakeChallengeActivity extends AppCompatActivity {
 
@@ -66,6 +74,7 @@ public class MakeChallengeActivity extends AppCompatActivity {
     TextView challenge_start;
     TextView challenge_end;
     TextView friend_list;
+    TextView friend_result;
 
     String startDate;
     String endDate;
@@ -78,7 +87,13 @@ public class MakeChallengeActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private FirebaseAuth auth;
 
+    //초대된 친구 리스트
+    ArrayList<String> inviteList;
+    ArrayList<ChallengeItem> boardList = new ArrayList<>();
+
+
     int count_page = 0;
+    int count = 0;
     String last_url = "";
     int row_index = -1;
     Calendar start_cal = Calendar.getInstance();
@@ -95,9 +110,9 @@ public class MakeChallengeActivity extends AppCompatActivity {
             String distanceInput = challenge_distance.getText().toString().trim();
             String startDate = challenge_start.getText().toString().trim();
             String endDate = challenge_end.getText().toString().trim();
-            String friendList = friend_list.getText().toString().trim();
+            String friendResult = friend_result.getText().toString().trim();
 
-            finish.setEnabled(!titleInput.isEmpty()&& !startDate.isEmpty()&& !distanceInput.isEmpty() && !endDate.isEmpty());//ㅅㄷㅌㅅ&& !friendList.isEmpty());
+            finish.setEnabled(!titleInput.isEmpty()&& !startDate.isEmpty()&& !distanceInput.isEmpty() && !endDate.isEmpty() && friendResult.contains("러너"));
         }
 
         @Override
@@ -126,12 +141,13 @@ public class MakeChallengeActivity extends AppCompatActivity {
         challenge_start = findViewById(R.id.challenge_start);
         challenge_end = findViewById(R.id.challenge_end);
         friend_list = findViewById(R.id.friend_list);
+        friend_result = findViewById(R.id.friend_result);
 
         challenge_title.addTextChangedListener(saveTextWatcher);
         challenge_distance.addTextChangedListener(saveTextWatcher);
         challenge_start.addTextChangedListener(saveTextWatcher);
         challenge_end.addTextChangedListener(saveTextWatcher);
-        friend_list.addTextChangedListener(saveTextWatcher);
+        friend_result.addTextChangedListener(saveTextWatcher);
 
         //파이어베이스 업로드
         auth = FirebaseAuth.getInstance();
@@ -166,20 +182,70 @@ public class MakeChallengeActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //챌린지가 만들어진 그 화면으로 가면서 데이터베이스에 저장함
-                new Thread(){
-                    public void run(){
-                    Bitmap bitmap = getBitmapFromURL(last_url);//비트맵으로 바꾸고
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
-                    byte[] byteArray = stream.toByteArray();
-                    Bundle bundle = new Bundle();//번들로 실어서 보낸다.
-                    bundle.putByteArray("image_bitmap",byteArray);
-                    Message msg = handler.obtainMessage();
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
+                //데이터베이스에 저장함
+                //String challenge_id, String cover_url, String title, double distance, String start_date, String end_date
+                String title = challenge_title.getText().toString();
+                double distance = Double.parseDouble(distanceKm);
+                String start_date = challenge_start.getText().toString();
+                String end_date = challenge_end.getText().toString();
+                final String key = database.getReference().child("challenge").push().getKey();
+
+                final ChallengeDTO cto = new ChallengeDTO(key,last_url,title,distance,start_date,end_date);
+                //챌린지 생성
+
+                //여기서 해시맵을 저장하자. 해시맵에는 각 사람의 uid와 뛴 거리가 있다.(리더보드)
+                HashMap<String, Double> boardMap = new HashMap<>();//해시맵은 데이터베이스 최초 업데이트용이기 때문에 사실상 쓰지는 않느다.
+                for(String runner : inviteList){
+                    boardMap.put(runner,0.0);//0.0으로 초기화시켜놓는다.
+                }
+                database.getReference().child("challenge").child(key).setValue(boardMap);
+
+                //각 사람들에게 참여중인 챌린지 목록도 추가한다.
+                database.getReference("userlist").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            if(inviteList.contains(snapshot.getKey())){
+                                count++;
+                                //누가 무슨 챌린지를 참여하는지
+                                database.getReference("participate").child(snapshot.getKey()).child(key).setValue(cto);
+                                //이름정보도 가져온다.
+                                boardList.add(new ChallengeItem(snapshot.getValue(UserDTO.class), 0.0));
+
+                                if(count == inviteList.size()) {
+                                    //챌린지가 만들어진 화면으로 넘어감
+                                    Intent intent = new Intent(MakeChallengeActivity.this, CreatedChallengeActivity.class);
+                                    //챌린지 정보는 여기에
+                                    intent.putExtra("challenge_info", cto);
+                                    //리더보드 정보는 여기에
+                                    intent.putExtra("leader_board",boardList);//순서를 주기 위해 리스트로 바꾼다.
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                            }
+                        }
                     }
-                }.start();
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                //굳이 안해도 되지 않을까?
+//                new Thread(){
+//                    public void run(){
+//                    Bitmap bitmap = getBitmapFromURL(last_url);//비트맵으로 바꾸고
+//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+//                    byte[] byteArray = stream.toByteArray();
+//                    Bundle bundle = new Bundle();//번들로 실어서 보낸다.
+//                    bundle.putByteArray("image_bitmap",byteArray);
+//                    Message msg = handler.obtainMessage();
+//                    msg.setData(bundle);
+//                    handler.sendMessage(msg);
+//                    }
+//                }.start();
             }
         });
 
@@ -229,13 +295,35 @@ public class MakeChallengeActivity extends AppCompatActivity {
         friend_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MakeChallengeActivity.this, InviteFriendActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(MakeChallengeActivity.this, AddFriendActivity.class);
+                startActivityForResult(intent,22);
+            }
+        });
+        friend_list.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    Intent intent = new Intent(MakeChallengeActivity.this, AddFriendActivity.class);
+                    startActivityForResult(intent,22);
+                }
             }
         });
 
         frameAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode ==RESULT_OK){//친구 추가한 결과를 받았을 때
+            if(requestCode == 22){
+                inviteList = (ArrayList<String>) data.getSerializableExtra("inviteList");
+                inviteList.add(auth.getCurrentUser().getUid());//나도 포함
+                friend_result.setText(inviteList.size()-1+"명의 러너");
+            }
+        }
+    }
+
     public void distanceShow(){
         final Dialog d = new Dialog(MakeChallengeActivity.this);
         d.setTitle("거리 선택");
@@ -364,7 +452,10 @@ public class MakeChallengeActivity extends AppCompatActivity {
             Log.e(TAG, "onPostExecute: 완료" );
         }
     }
+
     //url로부터 비트맵을 받았을 때
+    /*
+
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler(){
         public void handleMessage(Message msg){
@@ -412,9 +503,6 @@ public class MakeChallengeActivity extends AppCompatActivity {
                 }
             });
 
-
-
-
         }
     };
 
@@ -437,6 +525,6 @@ public class MakeChallengeActivity extends AppCompatActivity {
         }
     }
 
-
+*/
 
 }

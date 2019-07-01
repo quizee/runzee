@@ -34,11 +34,26 @@
 
         <ImageView
             android:id="@+id/my_level"
-            android:layout_width="171dp"
-            android:layout_height="151dp"
+            android:layout_width="150dp"
+            android:layout_height="114dp"
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"
             map:srcCompat="@drawable/white_belt" />
+
+        <TextView
+            android:id="@+id/mylevel_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:text="현재 내 레벨 -  화이트벨트" />
+
+        <TextView
+            android:id="@+id/mynextlevel_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingBottom="10dp"
+            android:text="다음 레벨까지 남은 거리 - 55.65 km" />
 
         <ProgressBar
             android:id="@+id/progressBar"

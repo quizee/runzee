@@ -68,6 +68,7 @@ public class RunningItem {
     public RunningItem(){
 
     }
+
     public RunningItem(String date, String title, double km, int runtime_seconds, int rest_count, int achievement){
         this.date = date;
         this.title = title;

@@ -31,7 +31,7 @@ public class TimerActivity extends AppCompatActivity {
     private static String TAG = "TimerActivity";
 
     //핸들러 배우고 없애기
-    Button temp_btn;
+   // Button temp_btn;
     Button stop_btn;
     TextView left_time;
     TextView rest_num;
@@ -158,7 +158,7 @@ public class TimerActivity extends AppCompatActivity {
         runningspeed = findViewById(R.id.runningspeed);
 
         //핸들러배우고 없애기
-        temp_btn = findViewById(R.id.temp_btn);
+        //temp_btn = findViewById(R.id.temp_btn);
 
         //서비스 바인딩 준비
         serviceIntent = new Intent(getApplicationContext(), MyTimerService.class);
@@ -186,13 +186,13 @@ public class TimerActivity extends AppCompatActivity {
         });
 
         //핸들러배우고 없애기
-        temp_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bindService();
-                setTimeText();
-            }
-        });
+//        temp_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                bindService();
+//                setTimeText();
+//            }
+//        });
         mainHandler = new Handler();
         Thread thread = new Thread((new GetCountThread()));
         thread.setDaemon(true);

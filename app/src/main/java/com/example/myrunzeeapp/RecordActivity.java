@@ -3,6 +3,7 @@ package com.example.myrunzeeapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,6 +49,10 @@ public class RecordActivity extends MenuActivity {
     //러너 데이터
     ArrayList<RunningItem> runningList = new ArrayList<RunningItem>();
 
+    //firebase
+    FirebaseAuth auth;
+    FirebaseDatabase database;
+
     //추가버튼 눌러서 러닝 추가할 때 사용
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -51,33 +61,63 @@ public class RecordActivity extends MenuActivity {
             if(resultCode==RESULT_OK){
                 String title = data.getStringExtra("name_edit");
                 String date = data.getStringExtra("date_edit");
-                String distance = data.getStringExtra("distance_edit");
+                final String distance = data.getStringExtra("distance_edit");
                 int time = data.getIntExtra("time_edit",0);
 
-                double run_dist = Double.parseDouble(distance.substring(0,4).trim());
+                final double run_dist = Double.parseDouble(distance.substring(0,4).trim());
                 int run_time = time;
                 RunningItem newitem = new RunningItem(date,title,run_dist,run_time);//러닝 객체를 만듬
+                database.getReference("participate").child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(final DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            //스냅샷 하나당 내가 참여하는 챌린지 하나
+                            database.getReference("challenge").child(snapshot.getKey()).child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                //내가 참여하는 챌린지들을 쏙쏙 골라서 내꺼를 불러오고 다시 넣는다.
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    double my_distance = dataSnapshot.getValue(Double.class);
+                                    my_distance-= run_dist;
+                                    database.getReference("challenge").child(snapshot.getKey()).child(auth.getCurrentUser().getUid()).setValue(my_distance);
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 runningList.add(0,newitem);
                 adapter.notifyDataSetChanged();
                 //리스트에 변화가 오면 쉐어드에도 반영해야함
-                if(LoginActivity.my_info != null){
-                    saveRunListPref(LoginActivity.my_info.get("email"));
-                }else{
-                    saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-                }
+//                if(LoginActivity.my_info != null){
+//                    saveRunListPref(LoginActivity.my_info.get("email"));
+//                }else{
+//                    saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
+//                }
+                saveRunListPref(auth.getCurrentUser().getEmail());
 
             }
         }
     }
     //shared preference에 반영하는 메소드
     public void saveRunListPref(String emailKey){
+        //각 회원마다 다른 이메일로 쉐어드 파일이 열린다.
         SharedPreferences runListPref = getSharedPreferences(emailKey,Activity.MODE_PRIVATE);
         SharedPreferences.Editor edit = runListPref.edit();
         Gson gson = new Gson();
         String json_runningList = gson.toJson(runningList);//arraylist을 json으로 만든다.
         Log.e(TAG, "saveRunListPref: "+json_runningList);
         edit.putString("runningList",json_runningList);
-        edit.commit();
+        edit.apply();
+        //쉐어드에 저장 후 파이어베이스에도 올린다.
+        database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("runningInfo").setValue(runningList);
     }
     public void saveAverage(String emailKey){
         SharedPreferences runListPref = getSharedPreferences(emailKey,Activity.MODE_PRIVATE);
@@ -85,7 +125,29 @@ public class RecordActivity extends MenuActivity {
         edit.putInt("average_time",averageTime);
         edit.putFloat("average_distance",(float)averageDistance);
         edit.putFloat("total_distance", (float)totalDistance);
-        edit.commit();
+        edit.apply();
+        //누적 거리 업데이트
+        database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("accumulate").setValue(totalDistance);
+        //벨트 업데이트
+        if(totalDistance<50){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("white");
+            //화이트 벨트
+        }else if(totalDistance>=50 && totalDistance<250){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("yellow");
+            //옐로우 벨트
+        }else if(totalDistance>=250 && totalDistance<500){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("blue");
+            //블루 벨트
+        }else if(totalDistance>=500 && totalDistance<2500){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("purple");
+            //퍼플 벨트
+        }else if(totalDistance>=2500 && totalDistance<10000){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("black");
+            //블랙 벨트
+        }else if(totalDistance>=10000){
+            database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("belt").setValue("red");
+            //레드 벨트
+        }
     }
     public void restoreRunListPref(String emailKey) {
         SharedPreferences runListPref = getSharedPreferences(emailKey, Activity.MODE_PRIVATE);
@@ -112,16 +174,21 @@ public class RecordActivity extends MenuActivity {
         recyclerView.setLayoutManager(layoutManager);
         add_btn = findViewById(R.id.add_btn);
 
+        //파이어베이스 초기화
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+
         //shared preference로 부터 리스트 정보를 가져온다.
-        Log.e(TAG, "onCreate: 가져오기 전 "+ runningList);
-        if(LoginActivity.my_info != null){
-            restoreRunListPref(LoginActivity.my_info.get("email"));//recordactivity의 runningList를 초기화시킴
-        }else{
-            restoreRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));//recordactivity의 runningList를 초기화시킴
-        }
-
-
+        //Log.e(TAG, "onCreate: 가져오기 전 "+ runningList);
+//        if(LoginActivity.my_info != null){
+//            restoreRunListPref(LoginActivity.my_info.get("email"));//recordactivity의 runningList를 초기화시킴
+//        }else{
+//            restoreRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));//recordactivity의 runningList를 초기화시킴
+//        }
+        restoreRunListPref(auth.getCurrentUser().getEmail());
         Log.e(TAG, "onCreate: 가져온 후 "+ runningList);
+        //굳이 서버에서 가져오지는 않는다. 저장만 서버에 해놓는다.
+
         total_distance = findViewById(R.id.total_distance);
         total_count_num = findViewById(R.id.total_count_num);
         average_distance_num = findViewById(R.id.average_distance_num);
@@ -139,9 +206,6 @@ public class RecordActivity extends MenuActivity {
                 startActivityForResult(intent, 1);//다른화면에서 처리하면 그것을 onActivityResult에서 받아서 list에 add하고 notify한다
             }
         });
-        //원래 view 에 있는 clicklistener도 인터페이스임 그 인터페이스 안에 있는 onclick메소드를 오버라이딩하는 식으로 썼던 거임 여태.
-        //그런데 어뎁터에는 setOnclicklistener라는 메소드가 없어서 우리가 만들어줘야함.
-        //그리고 그 setOnclickListener의 역할은 가지고 있는 인터페이스 객체 멤버변수를 초기화시켜주는 것임
 
         adapter.setOnItemClickListener(new OnItemClickListener(){
             @Override
@@ -159,6 +223,7 @@ public class RecordActivity extends MenuActivity {
                 startActivity(intent);
             }
         });
+
         setToolbarMenu();
         setTabLayout(0);
         record_lt.setImageResource(R.drawable.ic_storage_black_24dp);
@@ -198,16 +263,44 @@ public class RecordActivity extends MenuActivity {
             } else if(ReadyActivity.runningItem.getDeleted() && !RecordActivity.justWatching){//바로 삭제 시킨다면
                 //아무것도 안한다. 그냥 그대로 있다.
             }else{
+                final double run_dist = ReadyActivity.runningItem.getKm();
+                database.getReference("participate").child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(final DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            //스냅샷 하나당 내가 참여하는 챌린지 하나
+                            database.getReference("challenge").child(snapshot.getKey()).child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                //내가 참여하는 챌린지들을 쏙쏙 골라서 내꺼를 불러오고 다시 넣는다.
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    double my_distance = dataSnapshot.getValue(Double.class);
+                                    my_distance-= run_dist;
+                                    database.getReference("challenge").child(snapshot.getKey()).child(auth.getCurrentUser().getUid()).setValue(my_distance);
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 runningList.add(0,ReadyActivity.runningItem);
             }
             //리스트의 변화를 반영한다.
             adapter.notifyDataSetChanged();
-            //shared preference에도 반영한다.
-            if(LoginActivity.my_info != null){
-                saveRunListPref(LoginActivity.my_info.get("email"));
-            }else{
-                saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-            }
+            //shared preference와 firebase에도 반영한다.
+//            if(LoginActivity.my_info != null){
+//                saveRunListPref(LoginActivity.my_info.get("email"));
+//            }else{
+//                saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
+//            }
+            saveRunListPref(auth.getCurrentUser().getEmail());
 
             ReadyActivity.runningItem = null;
         }
@@ -237,11 +330,12 @@ public class RecordActivity extends MenuActivity {
       total_count_num.setText(String.valueOf(totalCountNum));
       average_distance_num.setText(String.valueOf(averageDistance));
       average_pace_num.setText(pace_string);
-        if(LoginActivity.my_info != null){
-            saveAverage(LoginActivity.my_info.get("email"));
-        }else{
-            saveAverage(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-        }
+//        if(LoginActivity.my_info != null){
+//            saveAverage(LoginActivity.my_info.get("email"));
+//        }else{
+//            saveAverage(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
+//        }
+        saveAverage(auth.getCurrentUser().getEmail());
 
     }
 

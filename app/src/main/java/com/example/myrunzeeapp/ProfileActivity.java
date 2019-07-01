@@ -94,8 +94,7 @@ public class ProfileActivity extends MenuActivity {
                 SharedPreferences.Editor editor = auto.edit();
                 editor.clear().apply();
                 Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 mAuth.signOut();
                 finish();

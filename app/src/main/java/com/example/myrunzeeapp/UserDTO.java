@@ -1,10 +1,11 @@
 package com.example.myrunzeeapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserDTO {
+public class UserDTO implements Serializable {
 
     String email;
     String name;
@@ -12,6 +13,10 @@ public class UserDTO {
     String profile_url;
     PhysicInfo physicInfo;
     ArrayList<String> friendList = new ArrayList<>();
+
+    public UserDTO(){
+
+    }
 
     public UserDTO(String uid, String email, String name){//회원가입할 때 이름과 이메일만 생성되고 프로필사진과 신체정보는 디폴트
         this.uid = uid;

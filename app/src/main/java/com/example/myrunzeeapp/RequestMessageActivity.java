@@ -61,6 +61,7 @@ public class RequestMessageActivity extends AppCompatActivity {
         Glide.with(this).load(msgItem.sender_url).apply(RequestOptions.circleCropTransform()).into(sender_profile);
 
         database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
         //일단 무슨 벨트인지 가져온다.
         database.getReference().child("runninglist").child(msgItem.msg.sender_uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -68,6 +69,33 @@ public class RequestMessageActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     if(snapshot.getKey().equals("belt")){
                         belt = snapshot.getValue(String.class);
+                        switch (belt){
+                            case "white":
+                                sender_belt.setImageResource(R.drawable.white_belt);
+                                sender_belt_text.setText("화이트벨트 회원");
+                                break;
+                            case "blue":
+                                sender_belt.setImageResource(R.drawable.blue_belt);
+                                sender_belt_text.setText("블루벨트 회원");
+                                break;
+                            case "yellow":
+                                sender_belt.setImageResource(R.drawable.yellow_belt);
+                                sender_belt_text.setText("옐로우벨트 회원");
+                                break;
+                            case "purple":
+                                sender_belt.setImageResource(R.drawable.purple_belt);
+                                sender_belt_text.setText("퍼플벨트 회원");
+                                break;
+                            case "black":
+                                sender_belt.setImageResource(R.drawable.black_belt);
+                                sender_belt_text.setText("블랙벨트 회원");
+                                break;
+                            case "red":
+                                sender_belt.setImageResource(R.drawable.red_belt);
+                                sender_belt_text.setText("레드벨트 회원");
+                                break;
+                            default:break;
+                        }
                     }
                 }
             }
@@ -76,33 +104,7 @@ public class RequestMessageActivity extends AppCompatActivity {
 
             }
         });
-        switch (belt){
-            case "white":
-                sender_belt.setImageResource(R.drawable.white_belt);
-                sender_belt_text.setText("화이트 벨트");
-                break;
-            case "blue":
-                sender_belt.setImageResource(R.drawable.blue_belt);
-                sender_belt_text.setText("블루 벨트");
-                break;
-            case "yellow":
-                sender_belt.setImageResource(R.drawable.yellow_belt);
-                sender_belt_text.setText("옐로우 벨트");
-                break;
-            case "purple":
-                sender_belt.setImageResource(R.drawable.purple_belt);
-                sender_belt_text.setText("퍼플 벨트");
-                break;
-            case "black":
-                sender_belt.setImageResource(R.drawable.black_belt);
-                sender_belt_text.setText("블랙 벨트");
-                break;
-            case "red":
-                sender_belt.setImageResource(R.drawable.red_belt);
-                sender_belt_text.setText("레드 벨트");
-                break;
-                default:break;
-        }
+
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override

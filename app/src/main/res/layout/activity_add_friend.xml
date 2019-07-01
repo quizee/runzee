@@ -5,15 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MakeFriendActivity">
-
+    tools:context=".AddFriendActivity">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background = "@color/colorPrimary"
-        android:id = "@+id/toolbar"
-        />
+        android:background="#FFFFFF" />
 
     <com.miguelcatalan.materialsearchview.MaterialSearchView
         android:id="@+id/search_view"
@@ -21,13 +19,19 @@
         android:layout_height="56dp"
         android:layout_marginBottom="10dp"
         app:searchBackIcon="@drawable/ic_arrow_back_black_24dp"
-        app:searchBackground="@color/colorPrimary"
-        app:searchSuggestionBackground="@color/colorPrimary" />
+        app:searchBackground="@color/colorWhite"
+        app:searchSuggestionBackground="@color/colorWhite" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/friend_recycler"
         android:layout_width="match_parent"
-        android:layout_height="523dp" />
+        android:layout_height="366dp"
+        android:orientation="vertical" />
 
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="확인" />
 
 </LinearLayout>

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             updateUI_auto(user);
                         } else {
                             updateUI_auto(null);
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI_auto(FirebaseUser user){
         if(user!=null){
             //데이터베이스에서 이름꺼내오면 조케따
-            Toast.makeText(MainActivity.this, "자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, user.getEmail()+" 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this, ReadyActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);

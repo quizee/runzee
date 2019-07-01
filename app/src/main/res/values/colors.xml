@@ -6,4 +6,9 @@
     <color name="lightgray">#808080</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="yellow">#70FFFF00</color>
+    <color name="blue">#700000FF</color>
+    <color name="red">#70FF0000</color>
+    <color name="purple">#709932CC</color>
+    <color name="black_opaque">#70000000</color>
 </resources>
