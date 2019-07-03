@@ -12,6 +12,7 @@ public class UserDTO implements Serializable {
     String uid;
     String profile_url;
     PhysicInfo physicInfo;
+    String fcmToken;
     ArrayList<String> friendList = new ArrayList<>();
 
     public UserDTO(){

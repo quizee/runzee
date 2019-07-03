@@ -17,7 +17,7 @@ public class FriendItem {
     public boolean equals(Object obj) {
         FriendItem friendItem = (FriendItem) obj;
         if (obj instanceof FriendItem) {
-            if(friendItem.uid.equals(uid)&& friendItem.email.equals(email) && friendItem.img_url.equals(img_url) && friendItem.name.equals(name)){
+            if(friendItem.uid.equals(uid)){
                 return true;
             }
         }

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,6 +55,13 @@ public class MyChallengeActivity extends MenuActivity {
 
         layoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
         layoutManager2 = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(getApplicationContext(),new LinearLayoutManager(this).getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        DividerItemDecoration dividerItemDecoration2 =
+                new DividerItemDecoration(getApplicationContext(),new LinearLayoutManager(this).getOrientation());
+        recyclerView2.addItemDecoration(dividerItemDecoration2);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView2.setLayoutManager(layoutManager2);

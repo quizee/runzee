@@ -62,7 +62,8 @@ dependencies {
 
     //search library
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
-    implementation 'com.google.firebase:firebase-messaging:19.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

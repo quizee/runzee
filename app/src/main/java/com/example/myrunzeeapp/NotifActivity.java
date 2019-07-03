@@ -52,6 +52,10 @@ public class NotifActivity extends MenuActivity implements ItemTouchHelperListen
         msg_recycler.setAdapter(msg_adapter);
         msg_recycler.setLayoutManager(msg_layout);
         msg_recycler.setItemAnimator(new DefaultItemAnimator());
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(getApplicationContext(),new LinearLayoutManager(this).getOrientation());
+        msg_recycler.addItemDecoration(dividerItemDecoration);
+
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new SwipeDeleteHelper(0,ItemTouchHelper.LEFT,this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(msg_recycler);
 
@@ -164,9 +168,10 @@ public class NotifActivity extends MenuActivity implements ItemTouchHelperListen
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof MessageAdapter.MyViewHolder){
             MessageItem deletedItem = messageItems.get(viewHolder.getAdapterPosition());
-
             int deleteIndex = viewHolder.getAdapterPosition();
-            msg_adapter.removeItem(deleteIndex);
+            //messageItems.remove(deleteIndex);
+            //msg_adapter.removeItem(deleteIndex);
+            //msg_adapter.notifyItemRemoved(deleteIndex);
             database.getReference().child("messages").child(auth.getCurrentUser().getUid()).child(deletedItem.msg.message_uid).removeValue();
             Log.e(TAG, "onSwiped: "+ auth.getCurrentUser().getUid()+ "에서"+deletedItem.msg.sender_uid+"삭제");
         }

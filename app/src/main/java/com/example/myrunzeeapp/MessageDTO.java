@@ -7,6 +7,7 @@ public class MessageDTO implements Serializable {
     String message_uid;
     long when_made;
     String message_type;
+    String download_url;
     /*
     *  친구 요청 == request
     *  친구 수락 == accept

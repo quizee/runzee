@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -51,6 +52,9 @@ public class BeltFriendActivity extends AppCompatActivity {
         beltfriend_layout = findViewById(R.id.beltfriend_layout);
         belt_adapter = new BeltFriendAdapter(BeltFriendActivity.this,beltFriends);
         layoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(getApplicationContext(),new LinearLayoutManager(this).getOrientation());
+        beltfriend_recycler.addItemDecoration(dividerItemDecoration);
 
         beltfriend_recycler.setAdapter(belt_adapter);
         beltfriend_recycler.setLayoutManager(layoutManager);
@@ -64,6 +68,7 @@ public class BeltFriendActivity extends AppCompatActivity {
 
         Log.e(TAG, "onCreate: 넘겨받은 친구 리스트"+friendlist);
 
+        belt_name.setText(belt_color+" belt 친구들");
 
         switch (belt_color){
             case "white":
@@ -109,12 +114,8 @@ public class BeltFriendActivity extends AppCompatActivity {
                             name = snapshot.getValue(String.class);
                             Log.e(TAG, "onDataChange: 이름 "+name+" 뽑고");
                         }
-                        if(snapshot.getKey().equals("state_message")){
-                            state_message = snapshot.getValue(String.class);
-                            Log.e(TAG, "onDataChange: 상메 "+state_message+" 뽑고");
-                        }
                     }
-                    BeltFriendItem beltFriendItem = new BeltFriendItem(uid,name,profile,state_message);
+                    BeltFriendItem beltFriendItem = new BeltFriendItem(uid,name,profile);
                     Log.e(TAG, "onDataChange: 결정된 벨트 아이템"+beltFriendItem);
                     beltFriends.add(beltFriendItem);
                     belt_adapter.notifyDataSetChanged();

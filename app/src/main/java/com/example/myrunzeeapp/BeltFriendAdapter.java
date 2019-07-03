@@ -1,6 +1,7 @@
 package com.example.myrunzeeapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -47,11 +48,8 @@ public class BeltFriendAdapter extends RecyclerView.Adapter<BeltFriendAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-
         Glide.with(myViewHolder.profile).load(beltFriends.get(i).profile).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile);
         myViewHolder.username.setText(beltFriends.get(i).username);
-        myViewHolder.state_message.setText(beltFriends.get(i).statemessage);
-
     }
 
     @Override
@@ -62,25 +60,36 @@ public class BeltFriendAdapter extends RecyclerView.Adapter<BeltFriendAdapter.My
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         ImageView profile;
         TextView username;
-        TextView state_message;
+
         public MyViewHolder(View view){
             super(view);
             profile = view.findViewById(R.id.profile);
             username = view.findViewById(R.id.username);
-            state_message = view.findViewById(R.id.state_message);
             view.setOnCreateContextMenuListener(this);
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            MenuItem block = menu.add(Menu.NONE, 1001, 1, "친구 끊기");
-            block.setOnMenuItemClickListener(onBlockMenu);
+            MenuItem block = menu.add(Menu.NONE, 1001, 2, "친구 끊기");
+            MenuItem send_voice = menu.add(Menu.NONE, 1002, 1, "응원메시지 보내기");
+            block.setOnMenuItemClickListener(onMenu);
+            send_voice.setOnMenuItemClickListener(onMenu);
         }
-        private final MenuItem.OnMenuItemClickListener onBlockMenu = new MenuItem.OnMenuItemClickListener() {
+        private final MenuItem.OnMenuItemClickListener onMenu = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
                 switch (item.getItemId()){
+
+                    case 1002:
+                        Intent intent = new Intent(context,AudioActivity.class);
+                        FirebaseAuth auth_me = FirebaseAuth.getInstance();
+                        int receiver_position = getAdapterPosition();
+                        intent.putExtra("receiver_name",beltFriends.get(receiver_position).username);//받는 사람 이름
+                        intent.putExtra("file_name",beltFriends.get(receiver_position).uid);//받는 사람 uid로 폴더 명을 만든다.
+                        context.startActivity(intent);
+                        break;
+
                     case 1001:
                         int position = getAdapterPosition();
                         // 나의 친구목록에서도 이 사람을 제거하고 이 사람의 친구목록에서도 나를 제거한다.
@@ -101,6 +110,14 @@ public class BeltFriendAdapter extends RecyclerView.Adapter<BeltFriendAdapter.My
                                     String friend = iter.next();
                                     if(friend.equals(you)) {
                                         iter.remove();
+                                    }
+                                }
+                                Iterator<BeltFriendItem> beltFriendItemIterator = beltFriends.iterator();
+                                while(beltFriendItemIterator.hasNext()){
+                                    BeltFriendItem item = beltFriendItemIterator.next();
+                                    if(item.uid.equals(you)){
+                                        beltFriendItemIterator.remove();
+                                        notifyDataSetChanged();
                                     }
                                 }
                                 /*

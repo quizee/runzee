@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,30 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.MyViewHolder
     ArrayList<ChallengeItem> boardItems = new ArrayList<>();
     double maxDistance;
 
+    class UpdateNumbers extends AsyncTask<Void, Integer, Integer>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+        }
+
+    }
+
     public BoardAdapter(Context context, double maxDistance, ArrayList<ChallengeItem> boardItems){
         this.context = context;
         this.maxDistance = maxDistance;
@@ -37,7 +63,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, final int i) {
         myViewHolder.rank.setText(String.valueOf(i+1));
         myViewHolder.username.setText(boardItems.get(i).userDTO.name);
         Glide.with(myViewHolder.profile).load(boardItems.get(i).userDTO.profile_url).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile);
@@ -48,26 +74,71 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.MyViewHolder
         }
         // / 7.0 km
         myViewHolder.total.setText(" / "+String.format("%.2f",maxDistance)+" km");
-        myViewHolder.visualize.setIndeterminate(true);
-        myViewHolder.visualize.setMax((int)maxDistance);
-        myViewHolder.visualize.setProgress((int)boardItems.get(i).userDistance);
+        //myViewHolder.visualize.setIndeterminate(true);
 
-        ValueAnimator animator = ValueAnimator.ofInt(0, (int)boardItems.get(i).userDistance);
-        animator.setDuration(800);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        //myViewHolder.visualize.invalidate();
+       // myViewHolder.visualize.setMax((int)maxDistance);
+        myViewHolder.visualize.setMax(100);
+        int my_race = (int)((- boardItems.get(i).userDistance/ maxDistance) *100);
+        Log.e("BoardAdapter", "onBindViewHolder:내 기록: "+my_race );
+        Log.e("BoardAdapter", "onBindViewHolder: "+boardItems.get(i).userDistance);
+
+        if(my_race>100){
+            myViewHolder.visualize.setProgress(100);
+        }else{
+            myViewHolder.visualize.setProgress(my_race);
+        }
+
+        //myViewHolder.visualize.setProgress((int)boardItems.get(i).userDistance);
+        //myViewHolder.visualize.getProgressDrawable().mutate();
+
+/*
+        new AsyncTask<Void, Integer, Integer>() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation){
-                myViewHolder.visualize.setProgress((Integer)animation.getAnimatedValue());
+            protected void onPreExecute() {
+                super.onPreExecute();
+                myViewHolder.visualize.setMax((int)maxDistance);
             }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
+
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                // start your activity here
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                myViewHolder.visualize.setProgress(values[0]);
+               // myViewHolder.userkm.setText();
+
             }
-       });
-        animator.start();
+
+            @Override
+            protected Integer doInBackground(Void... voids) {
+
+                int max = 0;
+
+                if((int)boardItems.get(i).userDistance > (int)maxDistance) {//뛴 거리가 목표거리보다 높다면
+                    max = (int)maxDistance;//목표거리까지 막아놓기기
+                }else{
+                   max= (int) boardItems.get(i).userDistance;
+                }
+
+               // int[] values = new int[2];
+
+                for (int k = 0; k < max; k++) {
+                    //values[0] = k;
+                    publishProgress(k);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+            }
+        }.execute();
+*/
 
     }
 

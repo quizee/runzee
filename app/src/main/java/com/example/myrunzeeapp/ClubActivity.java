@@ -75,11 +75,6 @@ public class ClubActivity extends MenuActivity {
     //친구 추천 목록을 위한 해시맵
     HashMap<String, Integer> recommendMap = new HashMap<>();
 
-
-
-    //UserDTO recomDTO;
-    //String yourFriendUid_static;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +135,6 @@ public class ClubActivity extends MenuActivity {
 //
 //            }
 //        });
-
     }
 
     @Override
@@ -151,21 +145,55 @@ public class ClubActivity extends MenuActivity {
         friendItems.clear();
         myFriendList.clear();
         totalUserList.clear();
+/*
 
+       database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //snapshot 하나당 한명이다
+                myFriendList = dataSnapshot.child("friendList").getValue(type);
+                Log.e(TAG, "내 친구들 목록:"+myFriendList.size()+"구비 완료!");
+           }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+       });
+ */
 
-//        database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                //snapshot 하나당 한명이다
-//                myFriendList = dataSnapshot.child("friendList").getValue(type);
-//                Log.e(TAG, "내 친구들 목록:"+myFriendList.size()+"구비 완료!");
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//            }
-//        });
+       database.getReference("userlist").child(auth.getCurrentUser().getUid()).child("friendList").addChildEventListener(new ChildEventListener() {
+           @Override
+           public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+               myFriendList.add(dataSnapshot.getValue(String.class));
+               if(myFriendList!=null) {
+                   Log.e(TAG, "onChildAdded: " + "내친구 구햇따." + myFriendList.size());
+               }else{
+                   Log.e(TAG, "onChildAdded: 아직 친구 없음");
+               }
+           }
+
+           @Override
+           public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+           }
+
+           @Override
+           public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
 
         //내 친구리스트를 먼저 가져온다.
+        /*
         database.getReference().child("userlist").child(auth.getCurrentUser().getUid())
                 .child("friendList")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -196,7 +224,7 @@ public class ClubActivity extends MenuActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 //위에꺼 안되면 아래꺼로 걍 하자
 //        database.getReference().child("userlist").addChildEventListener(new ChildEventListener() {
 //            @Override
@@ -269,6 +297,7 @@ public class ClubActivity extends MenuActivity {
                             //이게 변경이 되는지는 모르겠다
                             }
                         }
+                    /*
                     for (final String key : recommendMap.keySet()) {
                         //Log.e(TAG, "onChildChanged: 추천 리스트 만드는 중...... " + key + " 키값 확인합니다. ");
                         //Log.e(TAG, "userlist 사이즈가 설마..! " + userlist.size());
@@ -285,7 +314,7 @@ public class ClubActivity extends MenuActivity {
                                 }
                             }
                         }
-                    }
+                    }*/
                 }
             }
             @Override
@@ -313,6 +342,43 @@ public class ClubActivity extends MenuActivity {
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        database.getReference("userlist").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Log.e(TAG, "onDataChange: 스냅샷 하나가 한 사람 아니에요?"+ snapshot);
+                    if(recommendMap.containsKey(snapshot.getKey())){
+                        Log.e(TAG, "onDataChange: 이사람 해시맵에 있었잖아요"+snapshot.getKey());
+                        UserDTO userDTO = snapshot.getValue(UserDTO.class);
+                        Log.e(TAG, "onDataChange: 이사람 정보 뽑아내고"+userDTO.uid);
+                        FriendItem item = new FriendItem(userDTO.name,userDTO.profile_url,userDTO.email,userDTO.uid);
+                        Log.e(TAG, "onDataChange: 아이템도 구성했어요 "+item.uid);
+                        if (!recommend_friends.contains(item)) {
+                            recommend_friends.add(item);
+                            //친구 순서로 정렬
+                            FriendItem temp ;
+                            for(int i = recommend_friends.size()-1; i>0; i--){
+                                for(int j = 0; j<i; j++){
+                                    if(recommendMap.get(recommend_friends.get(j).uid)<recommendMap.get(recommend_friends.get(j+1).uid)){
+                                        temp = recommend_friends.get(j);
+                                        recommend_friends.remove(j);
+                                        recommend_friends.add(j+1, temp);
+                                    }
+                                }
+                            }
+                            recommend_adapter.notifyDataSetChanged();
+                            Log.e(TAG, " 추천 친구 리스트를 만들고 notify했습니다" + recommend_friends.size());
+                        }
+                    }
+                }
             }
 
             @Override

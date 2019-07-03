@@ -33,6 +33,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -115,6 +117,7 @@ public class LoginActivity extends AppCompatActivity{
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             updateUI(user);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             updateUI(null);

@@ -4,52 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CheerActivity"
-    android:background="@color/black">
+    android:background="#E8131212"
+    tools:context=".AudioActivity">
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/towhom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="USERNAME"
+        android:text="andrew에게 보내는 응원메시지!"
         android:textColor="#FFFFFF"
-        android:textSize="45sp"
-        android:textStyle="bold"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.288" />
+        app:layout_constraintVertical_bias="0.681" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="263dp"
-        android:layout_height="248dp"
+    <ImageButton
+        android:id="@+id/record_btn"
+        android:layout_width="123dp"
+        android:layout_height="109dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/loud_speaker" />
+        app:layout_constraintVertical_bias="0.26"
+        android:src="@drawable/ic_surround_sound_black_24dp" />
 
     <TextView
-        android:id="@+id/cheer"
+        android:id="@+id/howto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="응원을 받았습니다!"
+        android:text="누른 채로 유지"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/towhom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/record_btn"
         app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

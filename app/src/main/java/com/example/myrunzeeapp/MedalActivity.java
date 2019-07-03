@@ -1,5 +1,6 @@
 package com.example.myrunzeeapp;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +45,13 @@ public class MedalActivity extends MenuActivity {
     FirebaseAuth auth;
     FirebaseDatabase database;
     int count = 0 ;
+
+    SharedPreferences runListPref;
+    int pic_id = 0;
+    Float total_distance;
+    double remain_distance = -1;
+    String text = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,58 +70,78 @@ public class MedalActivity extends MenuActivity {
         recyclerView.setAdapter(adapter);//set adapter for recyclerview
         my_level = findViewById(R.id.my_level);
         progressBar = findViewById(R.id.progressBar);
-        progressBar.setProgress(50);
-        progressBar.setMax(100);
-        progressBar.setIndeterminate(true);
+
         mylevel_text = findViewById(R.id.mylevel_text);
-        mynextlevel_text = findViewById(R.id.mylevel_text);
+        mynextlevel_text = findViewById(R.id.mynextlevel_text);
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        SharedPreferences runListPref;
-        int pic_id = 0;
-        Float total_distance;
-        double remain_distance = -1;
-//        if(LoginActivity.my_info != null) {
-//            runListPref = getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
-//        }else{
-//            runListPref = getSharedPreferences(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""),Activity.MODE_PRIVATE);
-//        }
-
         runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(),Activity.MODE_PRIVATE);
 
+
+        setToolbarMenu();
+        setTabLayout(1);
+        record_lt.setImageResource(R.drawable.ic_storage_black_24dp);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        progressBar.setMax(100);
+        int my_race = 0;
         if(runListPref != null) {
             total_distance = runListPref.getFloat("total_distance", -1);
             if (total_distance != -1) {
                 if (total_distance < 50) {
                     pic_id = R.drawable.white_belt; //화이트 벨트까지
                     remain_distance = 50 - total_distance;
-                    mylevel_text.setText("현재 내 레벨 -  화이트벨트");
+                    text = "현재 내 레벨 -  화이트벨트";
+                    my_race = (int)((total_distance/50)*100);
                 } else if (total_distance >= 50 && total_distance < 250) {
                     pic_id = R.drawable.yellow_belt;
                     remain_distance = 250 - total_distance;
-                    mylevel_text.setText("현재 내 레벨 -  옐로우벨트");
+                    text = "현재 내 레벨 -  옐로우벨트";
+                    my_race = (int)((total_distance/250)*100);
                 } else if (total_distance >= 250 && total_distance < 500) {
                     pic_id = R.drawable.blue_belt;
                     remain_distance = 500 - total_distance;
-                    mylevel_text.setText("현재 내 레벨 -  블루벨트");
+                    text = "현재 내 레벨 -  블루벨트";
+                    my_race = (int)((total_distance/500)*100);
                 } else if (total_distance >= 500 && total_distance < 2500) {
                     pic_id = R.drawable.purple_belt;
                     remain_distance = 2500 - total_distance;
-                    mylevel_text.setText("현재 내 레벨 -  퍼플벨트");
+                    text = "현재 내 레벨 -  퍼플벨트";
+                    my_race = (int)((total_distance/2500)*100);
                 } else if (total_distance >= 2500 && total_distance < 10000) {
                     pic_id = R.drawable.black_belt;
                     remain_distance = 10000 - total_distance;
-                    mylevel_text.setText("현재 내 레벨 -  블랙벨트");
+                    text = "현재 내 레벨 -  블랙벨트";
+                    my_race = (int)((total_distance/10000)*100);
                 } else if (total_distance >= 10000) {
                     pic_id = R.drawable.red_belt;
-                    mylevel_text.setText("현재 내 레벨 -  레드벨트");
+                    text = "현재 내 레벨 -  레드벨트";
+                    remain_distance = -1;
+                    my_race = 100;
                 }
             }
         }
+        progressBar.setProgress(my_race);
+
+        ValueAnimator animator = ValueAnimator.ofInt(0, my_race);
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation){
+                progressBar.setProgress((Integer)animation.getAnimatedValue());
+            }
+        });
+        animator.start();
+
         my_level.setImageResource(pic_id);
-        if(remain_distance > -1) {
+        mylevel_text.setText(text);
+
+        if(remain_distance != -1) {
             mynextlevel_text.setText("다음 레벨까지 남은 거리" + " - " + String.format("%.2f",remain_distance )+ " km");
         }else{
             mynextlevel_text.setText("최고 레벨");
@@ -167,14 +195,10 @@ public class MedalActivity extends MenuActivity {
 
                     }
                 });
-
-
             }
         });
-        setToolbarMenu();
-        setTabLayout(1);
-        record_lt.setImageResource(R.drawable.ic_storage_black_24dp);
     }
+
     public void changeActivity(int index) {
         switch(index) {
             case 0:

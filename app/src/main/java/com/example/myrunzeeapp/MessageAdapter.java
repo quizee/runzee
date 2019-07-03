@@ -100,7 +100,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                         break;
                     case "cheer"://응원메시지일 경우
                         Intent intent1 = new Intent(context,CheerActivity.class);
-                        intent1.putExtra("username",messageItems.get(i).sender_name);//username으로 충분할지는 지켜봐야함
+                        intent1.putExtra("sender",messageItems.get(i).sender_name);
+                        intent1.putExtra("download_url",messageItems.get(i).msg.download_url);
                         ((Activity)context).startActivityForResult(intent1, cheer_code);
                         break;
                         default:break;
