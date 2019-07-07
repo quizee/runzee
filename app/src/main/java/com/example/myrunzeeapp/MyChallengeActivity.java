@@ -21,7 +21,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class MyChallengeActivity extends MenuActivity {
@@ -94,8 +98,38 @@ public class MyChallengeActivity extends MenuActivity {
         database.getReference().child("participate").child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ctos.add(dataSnapshot.getValue(ChallengeDTO.class));
-                adapter.notifyDataSetChanged();
+                String date = dataSnapshot.child("end_date").getValue(String.class);
+                Date today = new Date(System.currentTimeMillis());
+                today.setDate(today.getDate()-1);
+
+                //String [] dates = date.split(".");//2019.7.1 이런 식
+                Log.e(TAG, "onChildAdded: 날짜 가져옵니다"+date);
+//                if(dates[1].length() == 1){
+//                    dates[1] = "0"+dates[1];
+//                }
+//                if(dates[2].length() == 1){
+//                    dates[2] = "0"+dates[2];
+//                }
+                // 한자리 씩이라면 0을 붙여준다.
+                //date = dates[0]+"."+dates[1]+"."+dates[2];
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+                try {
+                    Date challenge_date = dateFormat.parse(date);
+                    //챌린지의 끝나는 날짜가 내일 이상이 아니면
+                    if(!challenge_date.after(today)){//오늘끝나는것도 포함되버림
+                        //participate 에서 done으로 옮긴다.
+                        database.getReference("done").child(auth.getCurrentUser().getUid()).child(dataSnapshot.getKey()).setValue(dataSnapshot.getValue(ChallengeDTO.class));
+                        database.getReference("participate").child(auth.getCurrentUser().getUid()).child(dataSnapshot.getKey()).removeValue();
+                    }else {//아직 끝나는 날이 오지 않았다면
+                        ctos.add(dataSnapshot.getValue(ChallengeDTO.class));
+                        adapter.notifyDataSetChanged();
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                //date1.after(date2) date1이 date2보다 이후면 true
+
             }
 
             @Override

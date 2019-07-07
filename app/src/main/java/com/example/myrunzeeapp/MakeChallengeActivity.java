@@ -372,7 +372,8 @@ public class MakeChallengeActivity extends AppCompatActivity {
         dp.updateDate(yy, mm, dd);
         c.set(Calendar.YEAR, yy);
         c.set(Calendar.MONTH, mm);
-        c.set(Calendar.DAY_OF_MONTH,dd);
+        //시연을 위해 잠깐 고칩니다/////////////////////////////////////////////
+        c.set(Calendar.DAY_OF_MONTH,dd-1);
         dp.setMinDate(c.getTimeInMillis());
 
         decide.setOnClickListener(new View.OnClickListener() {

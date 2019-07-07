@@ -162,7 +162,6 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -268,7 +267,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
 
         final ImageView one_picture = d.findViewById(R.id.one_picture);
         final ImageView cancel = d.findViewById(R.id.goout);
-        final Button share_picture = d.findViewById(R.id.share_picture);
+      //  final Button share_picture = d.findViewById(R.id.share_picture);
         final Button edit_picture = d.findViewById(R.id.edit_picture);
 
         Bitmap bm = BitmapFactory.decodeFile(filename);
@@ -283,12 +282,12 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
                 d.dismiss();
             }
         });
-        share_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //친구와 공유하는 부분은 firebase쓰고 나서
-            }
-        });
+//        share_picture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //친구와 공유하는 부분은 firebase쓰고 나서
+//            }
+//        });
         edit_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

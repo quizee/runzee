@@ -37,6 +37,7 @@ public class MachineTodayActivity extends AppCompatActivity {
     TextView consulting;
     TextView today_distance;
     TextView consulting_is;
+    Toolbar toolbar;
 
     //사진 관련된 부분 다시 imageview 로 바꿈
     ImageView certification;
@@ -60,7 +61,7 @@ public class MachineTodayActivity extends AppCompatActivity {
         today_distance = findViewById(R.id.today_distance);
         consulting_is = findViewById(R.id.consulting_is);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(ReadyActivity.runningItem.getDate());
         setSupportActionBar(toolbar);
 
@@ -107,7 +108,7 @@ public class MachineTodayActivity extends AppCompatActivity {
 
         final ImageView one_picture = d.findViewById(R.id.one_picture);
         final ImageView cancel = d.findViewById(R.id.goout);
-        final Button share_picture = d.findViewById(R.id.share_picture);
+        //final Button share_picture = d.findViewById(R.id.share_picture);
         final Button edit_picture = d.findViewById(R.id.edit_picture);
 
         Bitmap bm = BitmapFactory.decodeFile(filename);
@@ -122,12 +123,12 @@ public class MachineTodayActivity extends AppCompatActivity {
                 d.dismiss();
             }
         });
-        share_picture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //친구와 공유하는 부분은 firebase쓰고 나서
-            }
-        });
+//        share_picture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //친구와 공유하는 부분은 firebase쓰고 나서
+//            }
+//        });
         edit_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,6 +171,7 @@ public class MachineTodayActivity extends AppCompatActivity {
             case R.id.modify:
                 //modify
                 Intent intent1 = new Intent(MachineTodayActivity.this, RunEditActivity.class);
+                intent1.putExtra("date_edit",ReadyActivity.runningItem.getDate());
                 startActivityForResult(intent1, 3);
                 return true;
         }
@@ -229,6 +231,7 @@ public class MachineTodayActivity extends AppCompatActivity {
             achievement_thismuch.setText("");
             achievement_is.setText("");//빈칸으로 나둔다.
         }
+        toolbar.setTitle(ReadyActivity.runningItem.getDate());
 
         pace_this.setText(pace_string);
         title.setText("제목: "+default_title);

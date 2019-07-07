@@ -44,8 +44,13 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -290,18 +295,18 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
     }
 
     //tab 눌렀을 때 뷰를 어떻게 바꿀지에 대한 오버라이딩
-    public void changeActivity(int index) {
-        switch(index) {
-            case 1:
-                Intent intent = new Intent(ReadyActivity.this, ReadyPlanActivity.class);
-               // intent.putExtra("selected_tab",index);
-                startActivity(intent);
-                ready_index = 1;
-                break;
-            default:
-                break;
-        }
-    }
+//    public void changeActivity(int index) {
+//        switch(index) {
+//            case 1:
+//                Intent intent = new Intent(ReadyActivity.this, ReadyPlanActivity.class);
+//               // intent.putExtra("selected_tab",index);
+//                startActivity(intent);
+//                ready_index = 1;
+//                break;
+//            default:
+//                break;
+//        }
+//    }
     @Override
     protected  void onResume(){
         super.onResume();

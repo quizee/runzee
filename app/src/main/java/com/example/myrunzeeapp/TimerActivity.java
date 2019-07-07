@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +14,8 @@ import android.location.LocationManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,8 +25,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TimerActivity extends AppCompatActivity {
 
@@ -58,6 +73,10 @@ public class TimerActivity extends AppCompatActivity {
     int count_location = 0;
     double average_speed = 0;
     ArrayList <LatLng> trackPoints = new ArrayList<>();//위도 경도 리스트도 마찬가지
+
+    FirebaseDatabase database;
+    FirebaseAuth auth;
+    HashMap<String, Boolean> goMsg = new HashMap<>();
 
     //timer
     boolean isRunning = true;
@@ -140,6 +159,114 @@ public class TimerActivity extends AppCompatActivity {
             }
         }
     }
+    private void sendPostToFCM(final String my_name) {
+        //누구에게 가는 어떤 푸시 메시지이고 누르면 어떤 음성이 나올지
+
+        //내가 참여하는 챌린지에 있는 모든 사람들에게 알림이 가도록
+        database.getReference("participate").child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //datasnapshot 하나당 내가 참여하는 챌린지 하나
+                database.getReference("challenge").child(dataSnapshot.getKey()).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull final DataSnapshot dataSnapshot2, @Nullable String s) {
+                        //datasnapshot2 하나당 그 챌린지에 참여하는 한 사람.
+                        if(!goMsg.containsKey(dataSnapshot2.getKey())){
+                            goMsg.put(dataSnapshot2.getKey(),false);//처음엔 false
+                        }
+                        if(!dataSnapshot2.getKey().equals(auth.getCurrentUser().getUid())&& !goMsg.get(dataSnapshot2.getKey())) {//나는 제외하고
+                            database.getReference("userlist")
+                                    .child(dataSnapshot2.getKey()).child("fcmToken")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot3) {
+                                            final String token = dataSnapshot3.getValue(String.class);
+                                            goMsg.put(dataSnapshot2.getKey(),true);// 이미 한번 등장했다
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        // FMC 메시지 생성 start
+                                                        JSONObject root = new JSONObject();
+                                                        JSONObject data = new JSONObject();
+                                                        data.put("receiver_name", my_name);
+                                                        data.put("file_name", auth.getCurrentUser().getUid());
+                                                        root.put("data", data);
+                                                        root.put("to", token);
+
+                                                        // FMC 메시지 생성 end
+                                                        URL Url = new URL("https://fcm.googleapis.com/fcm/send");
+                                                        HttpURLConnection conn = (HttpURLConnection) Url.openConnection();
+                                                        conn.setRequestMethod("POST");
+                                                        conn.setDoOutput(true);
+                                                        conn.setDoInput(true);
+                                                        conn.addRequestProperty("Authorization", "key=" + "AAAAbIReuEk:APA91bELlRqy67058sv4DJs_50_OKajyunrJrJYe5ZQAq7ohNxukL5BWg9eVRy5YMEY7fREM6OgCiidw0Eih18_90Fl4aEksi3w1OmbA5vSKHfaqjEGJYeYUm4P4wvAoy-ic0LT7JTX6");
+                                                        conn.setRequestProperty("Accept", "application/json");
+                                                        conn.setRequestProperty("Content-type", "application/json");
+                                                        OutputStream os = conn.getOutputStream();
+                                                        os.write(root.toString().getBytes("utf-8"));
+                                                        os.flush();
+                                                        conn.getResponseCode();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }).start();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +286,15 @@ public class TimerActivity extends AppCompatActivity {
 
         //핸들러배우고 없애기
         //temp_btn = findViewById(R.id.temp_btn);
+
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+
+        SharedPreferences runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(), Activity.MODE_PRIVATE);
+        String my_name = runListPref.getString("my_name", "");
+        Log.e(TAG, "onCreate: "+"내이름은!!!!!!!"+my_name);
+        sendPostToFCM(my_name);
+
 
         //서비스 바인딩 준비
         serviceIntent = new Intent(getApplicationContext(), MyTimerService.class);
@@ -206,6 +342,11 @@ public class TimerActivity extends AppCompatActivity {
             return;
         }
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if(location == null){
+            location = new Location("dummyLocation");
+            location.setLatitude(37.480857);
+            location.setLongitude(126.971745);
+        }
         Log.e("GPSACtivity", "registerLocationUpdates: lat-> "+location.getLatitude()+" lon-> "+location.getLongitude());
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);

@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.health.SystemHealthManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,6 +35,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -54,6 +56,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 public class TakePhotoActivity extends AppCompatActivity {
 
@@ -63,6 +66,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     ImageView run_picture;
 
     ImageView finish;
+  //  ImageView download;
     String hmt_string;
     String km_string;
     Bitmap frame;
@@ -74,6 +78,7 @@ public class TakePhotoActivity extends AppCompatActivity {
 
         run_picture = findViewById(R.id.run_picture);
         finish = findViewById(R.id.finish);
+       // download = findViewById(R.id.download);
 
         Intent intent2 = getIntent();
         int howmuchTime = intent2.getIntExtra("howmuchTIme",0);
@@ -98,6 +103,73 @@ public class TakePhotoActivity extends AppCompatActivity {
 
             }
         }
+
+//        download.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.e(TAG, "onClick: "+"클릭되었습니다" );
+//                Bitmap saveBm = ((BitmapDrawable)run_picture.getDrawable()).getBitmap();
+////                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+////                Bitmap saveBm = ((BitmapDrawable)run_picture.getDrawable()).getBitmap();
+////                saveBm.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+////                MediaStore.Images.Media.insertImage(getContentResolver(), saveBm, "Title", null);
+////                Toast.makeText(TakePhotoActivity.this,"앨범에 저장되었습니다",Toast.LENGTH_LONG).show();
+//                String root = Environment.DIRECTORY_PICTURES;
+//                File myDir = new File(root);
+//                myDir.mkdir();
+//                String fname = "image- "+System.currentTimeMillis()+".jpg";
+//                File file = new File(myDir, fname);
+//                Log.e(TAG, "onClick: "+myDir+" "+fname);
+//                if(file.exists()) {
+//                    file.delete(); }
+//                try {
+//                    Log.e(TAG, "onClick: "+"들어왔습니다 트라이문");
+//                    FileOutputStream out = new FileOutputStream(file);
+//                    saveBm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+//                    out.flush();
+//                    out.close();
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                //File myDir=new File("/storage/emulated/0/DCIM/Camera");
+//                myDir.mkdirs();
+//                Random generator = new Random();
+//                int n = 10000;
+//                n = generator.nextInt(n);
+//                String fname = "Image-"+ n +".jpg";
+//                File file = new File (myDir, fname);
+//                if (file.exists ()) file.delete ();
+//                try {
+//                    FileOutputStream out = new FileOutputStream(file);
+//                    saveBm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+//                    Toast.makeText(TakePhotoActivity.this,"앨범에 저장되었습니다",Toast.LENGTH_LONG).show();
+//                    out.flush();
+//                    out.close();
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                FileOutputStream out = null;
+//                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//                String imageName = timeStamp+"_";
+//                File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//
+//                File imageFile = null;
+//                try {
+//                    imageFile = File.createTempFile(imageName,".jpg",storageDir);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                String filename = imageFile.getAbsolutePath();
+//                try {
+//                    out = new FileOutputStream(filename);
+//                    saveBm.compress(Bitmap.CompressFormat.PNG, 100, out);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +251,12 @@ public class TakePhotoActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
     //그 그림을 원본사진위에 덮어씌워주는 메소드
     public void overlayFrame(int drawable_id){
 

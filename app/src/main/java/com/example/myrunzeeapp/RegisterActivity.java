@@ -161,13 +161,14 @@ public class RegisterActivity extends AppCompatActivity{
             public void onClick(View v) {
                 String email_reg = email_register.getText().toString();
                 String password_reg = password_register.getText().toString();
-                createUser(email_reg,password_reg);
+                String name_reg = name_register.getText().toString();
+                createUser(email_reg,password_reg, name_reg);
             }
         });
     }
 
     //유효한 폼인지 검사하고 계정을 만든다
-    private void createUser(final String email, final String password){
+    private void createUser(final String email, final String password, final String name){
         if(!validateForm()){
             Toast.makeText(RegisterActivity.this,"최소요구사항을 확인해주십시오",Toast.LENGTH_LONG).show();
             return;
@@ -189,6 +190,11 @@ public class RegisterActivity extends AppCompatActivity{
                             double accum_distance = 0.0;
                             database.getReference().child("runninglist").child(user.getUid()).child("accumulate").setValue(accum_distance);
                             database.getReference().child("runninglist").child(user.getUid()).child("belt").setValue("white");
+
+                            SharedPreferences runListPref = getSharedPreferences(email,Activity.MODE_PRIVATE);
+                            SharedPreferences.Editor edit = runListPref.edit();
+                            edit.putString("my_name",name);
+                            edit.apply();
                             //database.getReference().child("messages").child(user.getUid()).setValue(msgDTO);
                             finish();
                         } else {

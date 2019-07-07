@@ -108,6 +108,7 @@ public class AudioActivity extends AppCompatActivity {
         Intent intent = getIntent();
         receiver_name = intent.getStringExtra("receiver_name");
         file_name = intent.getStringExtra("file_name");//receiver uid
+        Log.e(TAG, "onCreate: receivername="+receiver_name+" receiver uid= "+file_name );
 
         //fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         //fileName += "/"+System.currentTimeMillis()+".3gp";

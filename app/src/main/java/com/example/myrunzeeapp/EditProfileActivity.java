@@ -1,7 +1,9 @@
 package com.example.myrunzeeapp;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -261,8 +263,11 @@ public class EditProfileActivity extends AppCompatActivity {
     }
     public void upload(String uri, final String name_update, final PhysicInfo info_update){
         StorageReference storageRef = storage.getReferenceFromUrl("gs://my-running-31fee.appspot.com");//스토리지 서버로 가는 것
-        if(uri!=null){
+        Log.e(TAG, "upload: "+uri );
+        if(uri!=null)
+        {
             Uri file = Uri.fromFile(new File(uri));
+            Log.e(TAG, "upload: !!!!!!!!!");
             final StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());//사진을 먼저 업로드 하고
 
             UploadTask uploadTask = riversRef.putFile(file);
@@ -290,13 +295,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         UserDTO userDTO = new UserDTO(auth.getCurrentUser().getUid(),auth.getCurrentUser().getEmail(),name_update);
                         userDTO.physicInfo = info_update;
                         userDTO.profile_url = downloadURL;
-//                        Map<String,Object> userMap = userDTO.toMap();
-//                        database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                Toast.makeText(getApplicationContext(),"수정 완료!",Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
+
+                        SharedPreferences runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(), Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor edit = runListPref.edit();
+                        edit.putString("my_name",name_update);
+                        edit.apply();
                         database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).setValue(userDTO);
                         Intent intent = new Intent();
                         setResult(RESULT_OK,intent);
@@ -307,8 +310,19 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 }
             });
-        }
+        }else{//사진 수정은 안한경우
+            SharedPreferences runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(), Activity.MODE_PRIVATE);
+            SharedPreferences.Editor edit = runListPref.edit();
+            edit.putString("my_name",name_update);
+            edit.apply();
 
+            database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).child("name").setValue(name_update);
+            database.getReference().child("userlist").child(auth.getCurrentUser().getUid()).child("physicInfo").setValue(info_update);
+
+            Intent intent = new Intent();
+            setResult(RESULT_OK,intent);
+            finish();
+        }
 
     }
     public void setProfile_picture(String uri){

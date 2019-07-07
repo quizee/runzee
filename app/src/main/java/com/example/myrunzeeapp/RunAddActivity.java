@@ -185,6 +185,7 @@ public class RunAddActivity extends AppCompatActivity {
         int yy = c.get(Calendar.YEAR);
         int mm = c.get(Calendar.MONTH);
         int dd = c.get(Calendar.DAY_OF_MONTH);
+
         dp.updateDate(yy, mm, dd);
         c.set(Calendar.YEAR, yy);
         c.set(Calendar.MONTH, mm);

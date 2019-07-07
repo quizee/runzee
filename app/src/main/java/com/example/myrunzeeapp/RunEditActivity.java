@@ -6,10 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 public class RunEditActivity extends AppCompatActivity {
 
@@ -17,6 +22,7 @@ public class RunEditActivity extends AppCompatActivity {
     EditText distance_edit;
     EditText time_edit;
     EditText pace_edit;
+    EditText date_edit;
     Button save2;
     int paceInput;
     double run_dist;
@@ -40,6 +46,7 @@ public class RunEditActivity extends AppCompatActivity {
                 time_send = Integer.parseInt(words[0])*60 + Integer.parseInt(words[1]);
             }
             run_dist = Double.parseDouble(distanceInput.substring(0,4).trim());
+
             paceInput = (int)((double)time_send/run_dist);
 
             if(!distanceInput.isEmpty() && !timeInput.isEmpty()){
@@ -83,10 +90,15 @@ public class RunEditActivity extends AppCompatActivity {
         time_edit = findViewById(R.id.time_edit);
         save2 = findViewById(R.id.save2);
         pace_edit = findViewById(R.id.pace_edit);
+        date_edit = findViewById(R.id.date_edit);
+
+        Intent intent = getIntent();
+        String date_init = intent.getStringExtra("date_edit");
 
         //처음 열었을 때 초기화
         name_edit.setText(ReadyActivity.runningItem.getTitle());
         distance_edit.setText(String.valueOf(ReadyActivity.runningItem.getKm())+"  km");
+        date_edit.setText(date_init);
         int record_seconds = ReadyActivity.runningItem.getRuntime_seconds();
         time_edit.setText(record_seconds/60+":"+record_seconds%60);
         pace_edit.setText(ReadyActivity.runningItem.getPace_seconds()/60+"\'"+ReadyActivity.runningItem.getPace_seconds()%60+"\'\'");
@@ -103,13 +115,25 @@ public class RunEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String nameInput = name_edit.getText().toString();
-                String timeInput = time_edit.getText().toString().trim();
+                String dateInput = date_edit.getText().toString();
 
                 ReadyActivity.runningItem.setTitle(nameInput);
-                ReadyActivity.runningItem.setKm(run_dist);
-                ReadyActivity.runningItem.setCalorie((int)(((double)time_send/60.0)*7));
-                ReadyActivity.runningItem.setPace_seconds(paceInput);
-                ReadyActivity.runningItem.setRuntime_seconds(time_send);
+                double runDist = Double.parseDouble(distance_edit.getText().toString().trim().substring(0,4).trim());
+                // paceInput = (int)((double)time_send/run_dist);
+                String time_input = time_edit.getText().toString().trim();
+                String words[] = time_input.split(":");
+                int timeSend = 0;
+                if(words.length==3){
+                    timeSend = Integer.parseInt(words[0])*60*60 + Integer.parseInt(words[1])*60 + Integer.parseInt(words[2]);
+                }else if(words.length == 2){
+                    timeSend = Integer.parseInt(words[0])*60 + Integer.parseInt(words[1]);
+                }
+                ReadyActivity.runningItem.setKm(runDist);
+                ReadyActivity.runningItem.setCalorie((int)(((double)timeSend/60.0)*7));
+                ReadyActivity.runningItem.setPace_seconds((int)((double)timeSend/runDist));
+                ReadyActivity.runningItem.setRuntime_seconds(timeSend);
+                ReadyActivity.runningItem.setDate(dateInput);
+                Log.e("RunEditActivity", "onClick: distance "+runDist+ " pace "+(int)((double)timeSend/runDist)+" time "+timeSend);
 
                 Intent intent = new Intent();
                 setResult(RESULT_OK,intent);
@@ -146,6 +170,55 @@ public class RunEditActivity extends AppCompatActivity {
             }
         });
 
+        date_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    dateShow();
+                }
+            }
+        });
+        date_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateShow();
+            }
+        });
+
+    }
+    public void dateShow(){
+        final Dialog d = new Dialog(RunEditActivity.this);
+        d.setTitle("날짜 선택");
+        d.setContentView(R.layout.date_dialog);
+        //다이어로그 안의 요소들을 부른다
+        Button decide = (Button) d.findViewById(R.id.decide);
+        final DatePicker dp = (DatePicker) d.findViewById(R.id.datePicker);
+        final TimePicker tp = (TimePicker) d.findViewById(R.id.timePicker);
+        Calendar c = Calendar.getInstance();
+        int yy = c.get(Calendar.YEAR);
+        int mm = c.get(Calendar.MONTH);
+        int dd = c.get(Calendar.DAY_OF_MONTH);
+        dp.updateDate(yy, mm, dd);
+        c.set(Calendar.YEAR, yy);
+        c.set(Calendar.MONTH, mm);
+        c.set(Calendar.DAY_OF_MONTH,dd);
+        dp.setMaxDate(c.getTimeInMillis());
+
+        decide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String updateDate = dp.getYear()+"."+(dp.getMonth()+1)+"."+dp.getDayOfMonth();
+                String dayOrNight="";
+                if(tp.getCurrentHour()<12){
+                    dayOrNight = "오전";
+                }else{
+                    dayOrNight= "오후";
+                }
+                date_edit.setText(updateDate+" "+dayOrNight);
+                d.dismiss();
+            }
+        });
+        d.show();
     }
 
     public void distanceShow(){
