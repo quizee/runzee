@@ -2,20 +2,20 @@ package com.example.myrunzeeapp;
 
 public class AddFriendItem {
 
-    String profile_url;
+    String profileUrl;
     String username;
     String uid;
     boolean isInvited;
-    boolean already_invited = false;
+    boolean alreadyInvited = false;
 
     public AddFriendItem(){
 
     }
 
-    public AddFriendItem(String uid, String username, String profile_url, boolean isInvited){
+    public AddFriendItem(String uid, String username, String profileUrl, boolean isInvited){
         this.uid = uid;
         this.username = username;
-        this.profile_url = profile_url;
+        this.profileUrl = profileUrl;
         this.isInvited = isInvited;
     }
 }

@@ -321,14 +321,6 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
-        //핸들러배우고 없애기
-//        temp_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                bindService();
-//                setTimeText();
-//            }
-//        });
         mainHandler = new Handler();
         Thread thread = new Thread((new GetCountThread()));
         thread.setDaemon(true);

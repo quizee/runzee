@@ -232,20 +232,6 @@ public class MakeChallengeActivity extends AppCompatActivity {
 
                     }
                 });
-                //굳이 안해도 되지 않을까?
-//                new Thread(){
-//                    public void run(){
-//                    Bitmap bitmap = getBitmapFromURL(last_url);//비트맵으로 바꾸고
-//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
-//                    byte[] byteArray = stream.toByteArray();
-//                    Bundle bundle = new Bundle();//번들로 실어서 보낸다.
-//                    bundle.putByteArray("image_bitmap",byteArray);
-//                    Message msg = handler.obtainMessage();
-//                    msg.setData(bundle);
-//                    handler.sendMessage(msg);
-//                    }
-//                }.start();
             }
         });
 
@@ -453,79 +439,5 @@ public class MakeChallengeActivity extends AppCompatActivity {
             Log.e(TAG, "onPostExecute: 완료" );
         }
     }
-
-    //url로부터 비트맵을 받았을 때
-    /*
-
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler(){
-        public void handleMessage(Message msg){
-            Bundle bundle = msg.getData();
-            byte[] byteArray = bundle.getByteArray("image_bitmap");
-            //Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);//보냈던 번들을 받아서 비트맵으로 복원하고
-
-            //파이어베이스에 저장한다.
-            StorageReference storageRef = storage.getReferenceFromUrl("gs://my-running-31fee.appspot.com");//스토리지 서버로 가는 것
-
-            final StorageReference riversRef = storageRef.child("cover_images/"+last_url);
-            UploadTask uploadTask = riversRef.putBytes(byteArray);
-
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-
-                    // Continue with the task to get the download URL
-                    return riversRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        String downloadURL = downloadUri.toString();
-                        Log.e("EditProfileActivity", "onComplete: !!!!!!!!!!!!!!!!!"+downloadURL);
-
-                        ChallengeDTO challengeDTO = new ChallengeDTO();
-                        challengeDTO.cover_url = downloadURL;
-                        challengeDTO.distance = Double.parseDouble(distanceKm);
-                        challengeDTO.start_date = startDate;
-                        challengeDTO.end_date = endDate;
-                        challengeDTO.title = challenge_title.getText().toString();
-                        challengeDTO.uid = auth.getCurrentUser().getUid();
-
-                        database.getReference().child("cover_images").push().setValue(challengeDTO);
-                    } else {
-                        // Handle failures
-                        // ...
-                    }
-                }
-            });
-
-        }
-    };
-
-    public Bitmap getBitmapFromURL(String src){
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap bitmap = BitmapFactory.decodeStream(input);
-            return bitmap;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-*/
 
 }

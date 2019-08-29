@@ -82,7 +82,7 @@ public class ClubActivity extends MenuActivity {
         setToolbarMenu();
 
         //검색 툴바 세팅
-        Toolbar toolbar = findViewById(R.id.search_bar);
+        Toolbar toolbar = findViewById(R.id.searchBar);
         setSupportActionBar(toolbar);//액션바를 없애고 이거로 쓰겠다.
         getSupportActionBar().setTitle("친구 이메일 또는 이름 검색");
         toolbar.setTitleTextColor(Color.BLACK);
@@ -270,7 +270,7 @@ public class ClubActivity extends MenuActivity {
                 if(!dataSnapshot.getKey().equals(auth.getCurrentUser().getUid()) && !myFriendList.contains(dataSnapshot.getKey())) {//나 자신과 이미 있는 친구 제외
                     Log.e(TAG, "onChildAdded: 내친구가 아닌 사람들의 모임입니다" );
                     UserDTO searchDTO = dataSnapshot.getValue(UserDTO.class);
-                    friendItems.add(new FriendItem(searchDTO.name, searchDTO.profile_url, searchDTO.email, searchDTO.uid));
+                    friendItems.add(new FriendItem(searchDTO.name, searchDTO.profileUrl, searchDTO.email, searchDTO.uid));
                     search_adapter.notifyDataSetChanged();
                     Log.e(TAG, "후보 "+friendItems.size() + searchDTO.name);
 
@@ -306,7 +306,7 @@ public class ClubActivity extends MenuActivity {
                         FriendItem item;
                         for(UserDTO user : totalUserList){
                             if(user.uid.equals(key)){
-                                item = new FriendItem(user.name, user.profile_url, user.email, user.uid);
+                                item = new FriendItem(user.name, user.profileUrl, user.email, user.uid);
                                 if (!recommend_friends.contains(item)) {
                                     recommend_friends.add(item);
                                     recommend_adapter.notifyDataSetChanged();
@@ -325,7 +325,7 @@ public class ClubActivity extends MenuActivity {
 //                    //Log.e(TAG, "userlist 사이즈가 설마..! " + userlist.size());
 //                    UserDTO userDTO = dataSnapshot.getValue(UserDTO.class);
 //                    Log.e(TAG, "onChildChanged: 추가될 userdto는?? " + userDTO.name);
-//                    FriendItem item = new FriendItem(userDTO.name, userDTO.profile_url, userDTO.email, userDTO.uid);
+//                    FriendItem item = new FriendItem(userDTO.name, userDTO.profileUrl, userDTO.email, userDTO.uid);
 //                    if (!recommend_friends.contains(item)) {
 //                        recommend_friends.add(item);
 //                        recommend_adapter.notifyDataSetChanged();
@@ -359,7 +359,7 @@ public class ClubActivity extends MenuActivity {
                         Log.e(TAG, "onDataChange: 이사람 해시맵에 있었잖아요"+snapshot.getKey());
                         UserDTO userDTO = snapshot.getValue(UserDTO.class);
                         Log.e(TAG, "onDataChange: 이사람 정보 뽑아내고"+userDTO.uid);
-                        FriendItem item = new FriendItem(userDTO.name,userDTO.profile_url,userDTO.email,userDTO.uid);
+                        FriendItem item = new FriendItem(userDTO.name,userDTO.profileUrl,userDTO.email,userDTO.uid);
                         Log.e(TAG, "onDataChange: 아이템도 구성했어요 "+item.uid);
                         if (!recommend_friends.contains(item)) {
                             recommend_friends.add(item);
@@ -389,7 +389,7 @@ public class ClubActivity extends MenuActivity {
 
         //추천목록 해시맵이 완성되었으므로 어댑터를 만들 수 있다.
 
-        searchView = findViewById(R.id.search_view);
+        searchView = findViewById(R.id.searchView);
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {

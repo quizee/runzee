@@ -52,15 +52,15 @@ public class AddFriendAdapter extends RecyclerView.Adapter<AddFriendAdapter.MyVi
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, final int i) {
         myViewHolder.user_name.setText(friendItems.get(i).username);
 
-        if (friendItems.get(i).profile_url == null) {
+        if (friendItems.get(i).profileUrl == null) {
             Drawable default_icon = context.getResources().getDrawable(R.drawable.profile);
             Glide.with(context).load(default_icon).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile_picture);
         } else {
-            Glide.with(context).load(friendItems.get(i).profile_url).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile_picture);
+            Glide.with(context).load(friendItems.get(i).profileUrl).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile_picture);
         }
 
         myViewHolder.invite_friend.setChecked(friendItems.get(i).isInvited);
-        if(friendItems.get(i).already_invited){
+        if(friendItems.get(i).alreadyInvited){
             Log.e("AddFriendAdapter", "onBindViewHolder: "+friendItems.get(i).username+"씨는 체크박스 비활성화" );
             myViewHolder.invite_friend.setChecked(true);
             myViewHolder.invite_friend.setEnabled(false);

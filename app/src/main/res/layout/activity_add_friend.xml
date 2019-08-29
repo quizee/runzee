@@ -8,13 +8,13 @@
     tools:context=".AddFriendActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/search_bar"
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFFFFF" />
 
     <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:id="@+id/search_view"
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginBottom="10dp"
@@ -23,7 +23,7 @@
         app:searchSuggestionBackground="@color/colorWhite" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/friend_recycler"
+        android:id="@+id/friendRecycler"
         android:layout_width="match_parent"
         android:layout_height="366dp"
         android:orientation="vertical" />

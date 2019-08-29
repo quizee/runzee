@@ -124,7 +124,7 @@ public class ProfileActivity extends MenuActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                 intent.putExtra("name",name_profile.getText().toString());
-                intent.putExtra("profile_url",url);
+                intent.putExtra("profileUrl",url);
                 intent.putExtra("physicInfo",physicInfo);
                 startActivityForResult(intent,EDIT_PROFILE);
             }
@@ -146,7 +146,7 @@ public class ProfileActivity extends MenuActivity {
                     name_profile.setText(dataSnapshot.getValue(String.class));//이름
                     Log.e(TAG, "onChildAdded: 이름 예상 "+dataSnapshot);
                 }
-                if(dataSnapshot.getKey().equals("profile_url")) {//프사
+                if(dataSnapshot.getKey().equals("profileUrl")) {//프사
                     url = dataSnapshot.getValue(String.class);
                     Glide.with(ProfileActivity.this).load(url).apply(RequestOptions.circleCropTransform()).into(profile_picture);
                     Log.e(TAG, "onChildAdded: 프사 예상 "+dataSnapshot);
@@ -186,8 +186,8 @@ public class ProfileActivity extends MenuActivity {
 //                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 //                    //이름과 프사는 데이터베이스로부터
 //                    name_profile.setText(snapshot.child("name").getValue(String.class));//이름
-//                    if(snapshot.child("profile_url").exists()){//프사
-//                        url = snapshot.child("profile_url").getValue(String.class);
+//                    if(snapshot.child("profileUrl").exists()){//프사
+//                        url = snapshot.child("profileUrl").getValue(String.class);
 //                        Glide.with(ProfileActivity.this).load(url).apply(RequestOptions.circleCropTransform()).into(profile_picture);
 //                    }else{
 //                        Drawable default_icon = getResources().getDrawable(R.drawable.profile);

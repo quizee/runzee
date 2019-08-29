@@ -94,7 +94,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         physicInfo = (PhysicInfo) intent.getSerializableExtra("physicInfo");
         name = intent.getStringExtra("name");
-        url = intent.getStringExtra("profile_url");
+        url = intent.getStringExtra("profileUrl");
 
         //이름
         name_edit.setText(name);
@@ -291,10 +291,10 @@ public class EditProfileActivity extends AppCompatActivity {
                         Log.e("EditProfileActivity", "onComplete: !!!!!!!!!!!!!!!!!"+downloadURL);
 
                         //새로 생성이 아니라 수정이다
-                        //profile_url,
+                        //profileUrl,
                         UserDTO userDTO = new UserDTO(auth.getCurrentUser().getUid(),auth.getCurrentUser().getEmail(),name_update);
                         userDTO.physicInfo = info_update;
-                        userDTO.profile_url = downloadURL;
+                        userDTO.profileUrl = downloadURL;
 
                         SharedPreferences runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(), Activity.MODE_PRIVATE);
                         SharedPreferences.Editor edit = runListPref.edit();

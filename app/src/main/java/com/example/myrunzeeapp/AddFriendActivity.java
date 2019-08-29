@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
@@ -31,7 +32,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
     private static final String TAG = "AddFriendActivity";
     MaterialSearchView searchView;
-    RecyclerView friend_recycler;
+    RecyclerView friendRecycler;
     ArrayList<AddFriendItem> friendItems = new ArrayList<>();
     ArrayList<String> myFriendList = new ArrayList<>();
     AddFriendAdapter adapter;
@@ -43,7 +44,7 @@ public class AddFriendActivity extends AppCompatActivity {
     Button confirm;
 
     ArrayList<String> inviteFriendList = new ArrayList<>();
-    ArrayList<String> already_invited;
+    ArrayList<String> alreadyInvited;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,28 +57,28 @@ public class AddFriendActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         //검색 툴바 세팅
-        Toolbar toolbar = findViewById(R.id.search_bar);
+        Toolbar toolbar = findViewById(R.id.searchBar);
         setSupportActionBar(toolbar);//액션바를 없애고 이거로 쓰겠다.
         getSupportActionBar().setTitle("검색으로 친구 초대");
         toolbar.setTitleTextColor(Color.BLACK);
 
-        friend_recycler = findViewById(R.id.friend_recycler);
+        friendRecycler = findViewById(R.id.friendRecycler);
         layoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
         adapter = new AddFriendAdapter(AddFriendActivity.this, friendItems);
-        friend_recycler.setLayoutManager(layoutManager);
-        friend_recycler.setAdapter(adapter);
+        friendRecycler.setLayoutManager(layoutManager);
+        friendRecycler.setAdapter(adapter);
 
         //이미 만들어진 챌린지에서 친구를 추가하는 경우
         final Intent intent = getIntent();
-        already_invited = (ArrayList<String>)intent.getSerializableExtra("already_invited");
-        Log.e(TAG, "onCreate: intent에서 받는지 봅시다"+already_invited);
+        alreadyInvited = (ArrayList<String>)intent.getSerializableExtra("alreadyInvited");
+        Log.e(TAG, "onCreate: intent에서 받는지 봅시다"+alreadyInvited);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent resultIntent = new Intent();
                 for(AddFriendItem friend : friendItems){
-                    if(friend.isInvited && !friend.already_invited){ //체크되었지만 이미 초대된 사람들은 아닌
+                    if(friend.isInvited && !friend.alreadyInvited){ //체크되었지만 이미 초대된 사람들은 아닌
                         inviteFriendList.add(friend.uid);
                     }
                 }//체크되었던 사람들을 리스트에 추가한다.
@@ -88,16 +89,8 @@ public class AddFriendActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        friendItems.clear();
-        myFriendList.clear();
-
-        //내 친구리스트를 먼저 가져온다.
-        database.getReference().child("userlist").child(auth.getCurrentUser().getUid())
-                .child("friendList")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getMyFriendList(DatabaseReference ref){
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 myFriendList = dataSnapshot.getValue(type);
@@ -108,43 +101,65 @@ public class AddFriendActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void addInvitedFriend(UserDTO userDTO){
+        Log.e(TAG, "onDataChange: 이미 초대된 친구는 "+userDTO.name+"이고, alreadyInvited = true");
+        AddFriendItem friendItem = new AddFriendItem(userDTO.uid, userDTO.name, userDTO.profileUrl, true);
+        friendItem.alreadyInvited = true; //이미 초대된 처리를 한다.
+        friendItems.add(friendItem);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void addNewFriend(UserDTO userDTO){
+        friendItems.add(new AddFriendItem(userDTO.uid, userDTO.name, userDTO.profileUrl, false));//처음엔 다 false
+        adapter.notifyDataSetChanged();
+    }
+
+    public void showAllFriends(){
+        setNewAdapter(friendItems);
+    }
+
+    public void setNewAdapter(ArrayList<AddFriendItem> list){
+        AddFriendAdapter adapter1 = new AddFriendAdapter(AddFriendActivity.this,list);
+        friendRecycler.setAdapter(adapter1);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        friendItems.clear();
+        myFriendList.clear();
+
+        DatabaseReference userListRef = database.getReference().child("userlist");//유저들의 목록
+        String myUid = auth.getCurrentUser().getUid();//나의 uid
+        DatabaseReference myFriendListRef = userListRef.child(myUid).child("friendList");//내 친구목록
+
+        //내 친구목록을 구한다.
+        getMyFriendList(myFriendListRef);
 
         //그 친구들의 정보를 리사이클러뷰 리스트에 넣는다.
-        database.getReference().child("userlist").addListenerForSingleValueEvent(new ValueEventListener() {
+        //이미 기존에 추가되었던 친구인지 아닌지에 따라 다른 처리를 해준다.
+
+        userListRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    if(myFriendList.contains(snapshot.getKey())){
-                        //내 친구라면
+                    if(myFriendList.contains(snapshot.getKey())){ //내 친구라면
                         UserDTO userDTO = snapshot.getValue(UserDTO.class);
-                        Log.e(TAG, "already_invited 목록에 대한 기록입니다. null이면 처음 생성하는 겁니다. "+already_invited);
-                        //이미 만들어진 챌린지에서 추가한 거라면
-                        if(already_invited!=null){
-                            if(already_invited.contains(userDTO.uid)) {//이미 초대된 친구라면
-                                Log.e(TAG, "onDataChange: 이미 초대된 친구는 "+userDTO.name+"이고, already_invited = true");
-                                AddFriendItem friendItem = new AddFriendItem(userDTO.uid, userDTO.name, userDTO.profile_url, true);
-                                friendItem.already_invited = true; //이미 초대된 처리를 한다.
-                                friendItems.add(friendItem);
-                                adapter.notifyDataSetChanged();
-                            }else{//나머지는 처음과 동일하게
-                                Log.e(TAG, "onDataChange: 아직 초대되지 않은 친구는"+ userDTO.name+"입니다" );
-                                friendItems.add(new AddFriendItem(userDTO.uid, userDTO.name, userDTO.profile_url, false));//처음엔 다 false
-                                adapter.notifyDataSetChanged();
-                            }
-                        }else {
-                            friendItems.add(new AddFriendItem(userDTO.uid, userDTO.name, userDTO.profile_url, false));//처음엔 다 false
-                            adapter.notifyDataSetChanged();
+                        if(alreadyInvited.contains(userDTO.uid)){//이미 초대된 친구라면
+                            addInvitedFriend(userDTO);
+                        }else{//새로운 친구라면
+                            addNewFriend(userDTO);
                         }
                     }
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
-        searchView = findViewById(R.id.search_view);
+        searchView = findViewById(R.id.searchView);
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
             public void onSearchViewShown() {
@@ -152,9 +167,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
             @Override
             public void onSearchViewClosed() {
-                AddFriendAdapter adapter1 = new AddFriendAdapter(AddFriendActivity.this,friendItems);
-                friend_recycler.setAdapter(adapter1);
-                //아무것도 입력한게 없으면 전체 친구들 다 보이게 한다.
+                showAllFriends();
             }
         });
 
@@ -166,20 +179,16 @@ public class AddFriendActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(newText != null && !newText.isEmpty()){
+                if(newText != null && !newText.isEmpty()){//입력한 것이 있다면
                     ArrayList<AddFriendItem> found = new ArrayList<>();
                     for(AddFriendItem item: friendItems){
                         if(item.username.contains(newText)){//이름이 검색어에 포함되면 추가
                             found.add(item);
                         }
                     }
-                    AddFriendAdapter adapter1 = new AddFriendAdapter(AddFriendActivity.this,found);
-                    Log.e(TAG, "onQueryTextChange: "+found.size());
-                    friend_recycler.setAdapter(adapter1);
-                }else{
-                    AddFriendAdapter adapter1 = new AddFriendAdapter(AddFriendActivity.this,friendItems);
-                    friend_recycler.setAdapter(adapter1);
-                    //아무것도 입력한게 없으면 전체 친구들 다 보이게 한다.
+                    setNewAdapter(found);
+                }else{ //아무것도 입력한게 없으면 전체 친구들이 다 보이게 한다.
+                    showAllFriends();
                 }
                 return true;
             }

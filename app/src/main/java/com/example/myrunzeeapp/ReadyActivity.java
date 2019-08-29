@@ -61,11 +61,12 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
     private LocationListener locationListener;
     private Location location;
     LatLng latLng ;
+
     //구글맵
     private GoogleMap mMap;
-    private PolylineOptions polylineOptions;
     private static String TAG = "ReadyActivity";
     static int ready_index;
+
     //ReadyActivity 만의 멤버 변수
     TextView goal;
     Button start_btn;
@@ -79,8 +80,6 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
     //디폴트 목표시간
     int averageTime;
     float averageDistance;
-
-    private static final String KEY_TIMESET = "timeset_key";
 
     //핸들러 구현 후 지울 것
     Intent serviceIntent;
@@ -123,13 +122,12 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if(location == null){
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
-        if(location == null){
             latLng = new LatLng(37.4822314, 127.0368105);//임시로 지정
-        }else {
+        }else{
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
             Log.e("GPSACtivity", "registerLocationUpdates: lat-> " + location.getLatitude() + " lon-> " + location.getLongitude());
         }
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
     }
@@ -145,14 +143,33 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         mMap.addMarker(markerOptions);
     }
 
+    public String getStringFromMin(int minute){
+        String goalString = "";
+        if(minute<10){
+            goalString = "00:0"+minute;
+        }else{
+            if(minute > 60) {//시간으로 넘어감
+                int hour = minute % 60;
+                if (hour < 10) {
+                    goalString = "0" + minute / 60 + ":" + "0" + hour;
+                } else {
+                    goalString = "0" + minute / 60 + ":" + hour;
+                }
+            }else{//시간으로 넘어가진 않음
+                goalString ="00:"+minute;
+            }
+        }
+        return goalString;
+    }
+
     //시간 설정 다이어로그
     public void timeShow(){
         final Dialog d = new Dialog(ReadyActivity.this);
         d.setTitle("목표 시간");
         d.setContentView(R.layout.ready_time_dialog);
 
-        final NumberPicker minute = (NumberPicker)d.findViewById(R.id.ready_minute);
-        Button decide = (Button) d.findViewById(R.id.decide_time_ready);
+        final NumberPicker minute = d.findViewById(R.id.ready_minute);
+        Button decide = d.findViewById(R.id.decide_timeReady);
 
         minute.setMinValue(1);
         minute.setMaxValue(500);
@@ -160,22 +177,9 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         decide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String updateKm="";
-                if(minute.getValue()<10){
-                    updateKm = "00:0"+minute.getValue();
-                }else{
-                    if(minute.getValue()>60) {//시간으로 넘어감
-                        int minLeft = minute.getValue() % 60;
-                        if (minLeft < 10) {
-                            updateKm = "0" + minute.getValue() / 60 + ":" + "0" + minLeft;
-                        } else {
-                            updateKm = "0" + minute.getValue() / 60 + ":" + minLeft;
-                        }
-                    }else{//시간으로 넘어가진 않음
-                        updateKm ="00:"+minute.getValue();
-                    }
-                }
-                goal.setText(updateKm);
+                int minuteValue = minute.getValue();
+                String updateGoal = getStringFromMin(minuteValue);
+                goal.setText(updateGoal);
                 d.dismiss();
             }
         });
@@ -190,13 +194,11 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map_ready);
         mapFragment.getMapAsync(this);
 
-        //runningItem = new RunningItem();
         //ReadyActivity만의 멤버변수
-        edit_time = (Button) findViewById(R.id.edit_time);
-        goal = (TextView) findViewById(R.id.goal);
-        start_btn = (Button) findViewById(R.id.start_btn);
+        edit_time = findViewById(R.id.edit_time);
+        goal = findViewById(R.id.goal);
+        start_btn = findViewById(R.id.start_btn);
         emailKey = getIntent().getStringExtra("email");
-
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
@@ -213,34 +215,16 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         }
 
         SharedPreferences runListPref;
-        //평소 평균 목표 시간을 디폴트로 설정
-//        if(LoginActivity.my_info != null) {
-//            runListPref = getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
-//        }else{
-//            SharedPreferences auto = getSharedPreferences("auto",Activity.MODE_PRIVATE);
-//            runListPref = getSharedPreferences(auto.getString("auto_email",""),Activity.MODE_PRIVATE);
-//        }
         runListPref = getSharedPreferences(auth.getCurrentUser().getEmail(),Activity.MODE_PRIVATE);
+
         if (runListPref != null) {
             averageTime = runListPref.getInt("average_time",0);
             averageDistance = runListPref.getFloat("average_distance",0.0f);
         }
-
-        String goal_string = "";//나머지는 중요하지 않아
-        if(averageTime/3600>0){//시간단위로 넘어가면
-            if((averageTime%3600)/60<10) {//분이 10보다 작으면
-                goal_string = "0" + averageTime / 3600 + ":0" + (averageTime % 3600) / 60;
-            }else{
-                goal_string = "0" + averageTime / 3600 + ":" + (averageTime % 3600) / 60;
-            }
-        }else{//시간 단위로 넘어가지 않으면
-            if(averageTime/60<10){
-                goal_string = "00:0"+averageTime/60;
-            }else{
-                goal_string = "00:"+averageTime/60;
-            }
-        }
-        goal.setText(goal_string);
+        //저장된 시간들의 평균에 따라 목표 시간을 초기화시킨다.
+        int averageMinute = averageTime/60;
+        String goalString = getStringFromMin(averageMinute);
+        goal.setText(goalString);
 
         edit_time.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,21 +237,13 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //핸들러 배우고 다시 바꾸기
-                //Intent intent = new Intent(ReadyActivity.this, CountDownActivity.class);
-
-                //////////////////핸들러하고나서 이부분은 지워도 됩니다(서비스를 시작하는 지점이 여기가 아니므로)//////////////
                 serviceIntent = new Intent(getApplicationContext(), MyTimerService.class);
                 String words[] = goal.getText().toString().split(":");
                 int send_minute = Integer.parseInt(words[0])*60+ Integer.parseInt(words[1]);
                 serviceIntent.putExtra("goal_time",send_minute); // 목표시간을 전달한다.
+
                 startService(serviceIntent);//타이머 서비스를 시작시킨다.
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                 Intent intent = new Intent(ReadyActivity.this, TimerActivity.class);
-                //intent.putExtra("goal_time",time_edit.getText().toString().trim());//countdown activity에서 다시 전달해야할 듯
-
                 startActivity(intent);
             }
         });
@@ -294,19 +270,6 @@ public class ReadyActivity extends MenuActivity implements OnMapReadyCallback {
                 });
     }
 
-    //tab 눌렀을 때 뷰를 어떻게 바꿀지에 대한 오버라이딩
-//    public void changeActivity(int index) {
-//        switch(index) {
-//            case 1:
-//                Intent intent = new Intent(ReadyActivity.this, ReadyPlanActivity.class);
-//               // intent.putExtra("selected_tab",index);
-//                startActivity(intent);
-//                ready_index = 1;
-//                break;
-//            default:
-//                break;
-//        }
-//    }
     @Override
     protected  void onResume(){
         super.onResume();

@@ -102,7 +102,7 @@ public class NotifActivity extends MenuActivity implements ItemTouchHelperListen
                                     default: break;
                                 }
                                 Log.e(TAG, "onDataChange: 컨텐츠정보 넘기기!!!!"+contents);
-                            }else if(snapshot.getKey().equals("profile_url")){
+                            }else if(snapshot.getKey().equals("profileUrl")){
                                 userprofile = snapshot.getValue(String.class);//프사 확보
                                 Log.e(TAG, "onDataChange: 컨텐츠정보 넘기기!!!!"+userprofile);
                             }

@@ -110,8 +110,6 @@ public class AudioActivity extends AppCompatActivity {
         file_name = intent.getStringExtra("file_name");//receiver uid
         Log.e(TAG, "onCreate: receivername="+receiver_name+" receiver uid= "+file_name );
 
-        //fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        //fileName += "/"+System.currentTimeMillis()+".3gp";
         towhom.setText(receiver_name+"에게 보내는 응원메시지!");
 
         record_btn.setOnTouchListener(new View.OnTouchListener() {
@@ -227,20 +225,6 @@ public class AudioActivity extends AppCompatActivity {
                 }
             }
         });
-
-        /*
-        riversRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(AudioActivity.this, receiver_name+"님에게 전송완료!", Toast.LENGTH_LONG).show();
-                String key = database.getReference("messages").child(file_name).push().getKey();
-                MessageDTO messageDTO = new MessageDTO(auth.getCurrentUser().getUid(),key,"cheer");
-                messageDTO.when_made = now;//storage에 폴더명과 같다
-                progressDialog.dismiss();
-                finish();
-            }
-        });*/
-
     }
 
     private void sendPostToFCM(String file_name, final String my_name, final String downloadURL) {

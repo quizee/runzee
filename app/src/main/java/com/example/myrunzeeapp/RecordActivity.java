@@ -95,14 +95,7 @@ public class RecordActivity extends MenuActivity {
                 });
                 runningList.add(0,newitem);
                 adapter.notifyDataSetChanged();
-                //리스트에 변화가 오면 쉐어드에도 반영해야함
-//                if(LoginActivity.my_info != null){
-//                    saveRunListPref(LoginActivity.my_info.get("email"));
-//                }else{
-//                    saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-//                }
                 saveRunListPref(auth.getCurrentUser().getEmail());
-
             }
         }
     }
@@ -119,6 +112,7 @@ public class RecordActivity extends MenuActivity {
         //쉐어드에 저장 후 파이어베이스에도 올린다.
         database.getReference().child("runninglist").child(auth.getCurrentUser().getUid()).child("runningInfo").setValue(runningList);
     }
+
     public void saveAverage(String emailKey){
         SharedPreferences runListPref = getSharedPreferences(emailKey,Activity.MODE_PRIVATE);
         SharedPreferences.Editor edit = runListPref.edit();
@@ -178,13 +172,6 @@ public class RecordActivity extends MenuActivity {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        //shared preference로 부터 리스트 정보를 가져온다.
-        //Log.e(TAG, "onCreate: 가져오기 전 "+ runningList);
-//        if(LoginActivity.my_info != null){
-//            restoreRunListPref(LoginActivity.my_info.get("email"));//recordactivity의 runningList를 초기화시킴
-//        }else{
-//            restoreRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));//recordactivity의 runningList를 초기화시킴
-//        }
         restoreRunListPref(auth.getCurrentUser().getEmail());
         Log.e(TAG, "onCreate: 가져온 후 "+ runningList);
         //굳이 서버에서 가져오지는 않는다. 저장만 서버에 해놓는다.
@@ -294,14 +281,7 @@ public class RecordActivity extends MenuActivity {
             }
             //리스트의 변화를 반영한다.
             adapter.notifyDataSetChanged();
-            //shared preference와 firebase에도 반영한다.
-//            if(LoginActivity.my_info != null){
-//                saveRunListPref(LoginActivity.my_info.get("email"));
-//            }else{
-//                saveRunListPref(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-//            }
             saveRunListPref(auth.getCurrentUser().getEmail());
-
             ReadyActivity.runningItem = null;
         }
 
@@ -324,19 +304,13 @@ public class RecordActivity extends MenuActivity {
             averagePace = totalPace / totalCountNum;
             averageTime = totalTime/ totalCountNum;
         }
-        String pace_string = averagePace/60+"\'"+averagePace%60+"\'\'";
+        String paceString = averagePace/60+"\'"+averagePace%60+"\'\'";
 
       total_distance.setText(String.valueOf(totalDistance));
       total_count_num.setText(String.valueOf(totalCountNum));
       average_distance_num.setText(String.valueOf(averageDistance));
-      average_pace_num.setText(pace_string);
-//        if(LoginActivity.my_info != null){
-//            saveAverage(LoginActivity.my_info.get("email"));
-//        }else{
-//            saveAverage(getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""));
-//        }
-        saveAverage(auth.getCurrentUser().getEmail());
-
+      average_pace_num.setText(paceString);
+      saveAverage(auth.getCurrentUser().getEmail());
     }
 
     @Override

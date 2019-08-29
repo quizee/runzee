@@ -66,7 +66,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.MyViewHolder
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, final int i) {
         myViewHolder.rank.setText(String.valueOf(i+1));
         myViewHolder.username.setText(boardItems.get(i).userDTO.name);
-        Glide.with(myViewHolder.profile).load(boardItems.get(i).userDTO.profile_url).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile);
+        Glide.with(myViewHolder.profile).load(boardItems.get(i).userDTO.profileUrl).apply(RequestOptions.circleCropTransform()).into(myViewHolder.profile);
         if(boardItems.get(i).userDistance >= 0.0){
             myViewHolder.userkm.setText("0.00 km");
         }else{

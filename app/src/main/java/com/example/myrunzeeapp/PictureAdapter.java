@@ -89,11 +89,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.MyPictur
         holder.medal_picture.setImageResource(medal_id);
 
         SharedPreferences runListPref;
-//        if(LoginActivity.my_info != null) {
-//            runListPref = context.getSharedPreferences(LoginActivity.my_info.get("email"), Activity.MODE_PRIVATE);
-//        }else{
-//            runListPref = context.getSharedPreferences(context.getSharedPreferences("auto",Activity.MODE_PRIVATE).getString("auto_email",""),Activity.MODE_PRIVATE);
-//        }
+
         auth = FirebaseAuth.getInstance();
         runListPref = context.getSharedPreferences(auth.getCurrentUser().getEmail(),Activity.MODE_PRIVATE);
 
@@ -118,7 +114,6 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.MyPictur
         if(position>=blurFrom){
             holder.isitMine.setBackgroundColor(Color.rgb(0xEE,0xEE,0xEE));
             holder.isitMine.getBackground().setAlpha(220);
-            //holder.isitMine.getBackground().setColorFilter(Color.parseColor("#63FFFFFF"), PorterDuff.Mode.);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

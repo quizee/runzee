@@ -10,7 +10,7 @@ public class UserDTO implements Serializable {
     String email;
     String name;
     String uid;
-    String profile_url;
+    String profileUrl;
     PhysicInfo physicInfo;
     String fcmToken;
     ArrayList<String> friendList = new ArrayList<>();
@@ -24,7 +24,7 @@ public class UserDTO implements Serializable {
         this.email = email;
         this.name = name;
         this.physicInfo = new PhysicInfo("female");//기본 값
-        this.profile_url = null;
+        this.profileUrl = null;
     }
     public Map<String, Object> toMap() {
         //5가지 정보를 맵으로 만든다.
@@ -32,7 +32,7 @@ public class UserDTO implements Serializable {
         result.put("uid", uid);
         result.put("name", name);
         result.put("email", email);
-        result.put("profile_url",profile_url);
+        result.put("profileUrl",profileUrl);
         HashMap<String,Object> physic_result = new HashMap<>();
         physic_result.put("gender",physicInfo.gender);
         physic_result.put("height",physicInfo.height);

@@ -54,7 +54,7 @@
                     tools:context=".GoogleMapsActivity" />
 
                 <TextView
-                    android:id="@+id/today_distance"
+                    android:id="@+id/todayDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -103,7 +103,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/pace_this"
+                    android:id="@+id/paceThis"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -113,7 +113,7 @@
                     android:textSize="23sp" />
 
                 <TextView
-                    android:id="@+id/time_this"
+                    android:id="@+id/timeThis"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -123,7 +123,7 @@
                     android:textSize="23sp" />
 
                 <TextView
-                    android:id="@+id/calorie_this"
+                    android:id="@+id/calorieThis"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -142,7 +142,7 @@
                 android:paddingBottom="10dp">
 
                 <TextView
-                    android:id="@+id/achievement_is"
+                    android:id="@+id/achievementIs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -151,7 +151,7 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/achievement_thismuch"
+                    android:id="@+id/achievementThismuch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -171,7 +171,7 @@
                 android:paddingBottom="10dp">
 
                 <TextView
-                    android:id="@+id/consulting_is"
+                    android:id="@+id/consultingIs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"

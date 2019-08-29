@@ -106,7 +106,7 @@ public class BeltFriendActivity extends AppCompatActivity {
                     uid = dataSnapshot.getKey();
                     Log.e(TAG, "onDataChange: userlist에서 벨트에 있는 친구 중 한명: "+uid);
                     for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        if(snapshot.getKey().equals("profile_url")){
+                        if(snapshot.getKey().equals("profileUrl")){
                             profile = snapshot.getValue(String.class);
                             Log.e(TAG, "onDataChange: 프로필 "+profile+" 뽑고");
                         }
@@ -138,7 +138,7 @@ public class BeltFriendActivity extends AppCompatActivity {
 //                    Log.e(TAG, "onDataChange: userlist에서 벨트에 있는 친구라면"+uid);
 //                    //더 하위로 내려가서
 //                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                        if(snapshot.getKey().equals("profile_url")){
+//                        if(snapshot.getKey().equals("profileUrl")){
 //                            profile = snapshot.getValue(String.class);
 //                            Log.e(TAG, "onDataChange: 프로필 "+profile+" 뽑고");
 //                        }

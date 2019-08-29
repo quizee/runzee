@@ -189,7 +189,7 @@ public class CreatedChallengeActivity extends AppCompatActivity {
                 for( ChallengeItem challengeItem : boardItems){
                     invitedMembers.add(challengeItem.userDTO.uid);
                 }
-                intent1.putExtra("already_invited",invitedMembers);
+                intent1.putExtra("alreadyInvited",invitedMembers);
                 Log.e("CreatedActivity", "onOptionsItemSelected: "+ invitedMembers+"보내려고 합니다!!!");
                 startActivityForResult(intent1,23);
                 //startActivity(intent1);

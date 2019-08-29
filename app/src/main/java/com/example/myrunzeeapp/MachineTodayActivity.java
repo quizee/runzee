@@ -26,17 +26,17 @@ import javax.crypto.Mac;
 
 public class MachineTodayActivity extends AppCompatActivity {
 
-    String today_consult;
+    String todayConsult;
 
-    TextView calorie_this;
-    TextView time_this;
-    TextView achievement_thismuch;
-    TextView achievement_is;
-    TextView pace_this;
+    TextView calorieThis;
+    TextView timeThis;
+    TextView achievementThismuch;
+    TextView achievementIs;
+    TextView paceThis;
     TextView title;
     TextView consulting;
-    TextView today_distance;
-    TextView consulting_is;
+    TextView todayDistance;
+    TextView consultingIs;
     Toolbar toolbar;
 
     //사진 관련된 부분 다시 imageview 로 바꿈
@@ -50,16 +50,16 @@ public class MachineTodayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_machine_today);
 
-        pace_this = findViewById(R.id.pace_this);
-        calorie_this = findViewById(R.id.calorie_this);
-        time_this = findViewById(R.id.time_this);
-        achievement_thismuch = findViewById(R.id.achievement_thismuch);
-        achievement_is = findViewById(R.id.achievement_is);
+        paceThis = findViewById(R.id.paceThis);
+        calorieThis = findViewById(R.id.calorieThis);
+        timeThis = findViewById(R.id.timeThis);
+        achievementThismuch = findViewById(R.id.achievementThismuch);
+        achievementIs = findViewById(R.id.achievementIs);
         title = findViewById(R.id.title);
         consulting = findViewById(R.id.consulting);
         certification = findViewById(R.id.certification);
-        today_distance = findViewById(R.id.today_distance);
-        consulting_is = findViewById(R.id.consulting_is);
+        todayDistance = findViewById(R.id.todayDistance);
+        consultingIs = findViewById(R.id.consultingIs);
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(ReadyActivity.runningItem.getDate());
@@ -104,17 +104,17 @@ public class MachineTodayActivity extends AppCompatActivity {
     public void pictureShow(){
         final Dialog d = new Dialog(MachineTodayActivity.this);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        d.setContentView(R.layout.one_picture_dialog);
+        d.setContentView(R.layout.onePicture_dialog);
 
-        final ImageView one_picture = d.findViewById(R.id.one_picture);
+        final ImageView onePicture = d.findViewById(R.id.onePicture);
         final ImageView cancel = d.findViewById(R.id.goout);
         //final Button share_picture = d.findViewById(R.id.share_picture);
-        final Button edit_picture = d.findViewById(R.id.edit_picture);
+        final Button editPicture = d.findViewById(R.id.editPicture);
 
         Bitmap bm = BitmapFactory.decodeFile(filename);
         if(filename!=null) {
-            //one_picture.setImageBitmap(bm);
-            Glide.with(one_picture.getContext()).load(bm).into(one_picture);
+            //onePicture.setImageBitmap(bm);
+            Glide.with(onePicture.getContext()).load(bm).into(onePicture);
         }
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -129,7 +129,7 @@ public class MachineTodayActivity extends AppCompatActivity {
 //                //친구와 공유하는 부분은 firebase쓰고 나서
 //            }
 //        });
-        edit_picture.setOnClickListener(new View.OnClickListener() {
+        editPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MachineTodayActivity.this, TakePhotoActivity.class);
@@ -188,13 +188,13 @@ public class MachineTodayActivity extends AppCompatActivity {
         super.onResume();
         //거리 추가함
         double distance = ReadyActivity.runningItem.getKm();
-        int total_rest = ReadyActivity.runningItem.getRest_count();
-        int time_r = ReadyActivity.runningItem.getRuntime_seconds();
+        int totalRest = ReadyActivity.runningItem.getRest_count();
+        int timeR = ReadyActivity.runningItem.getRuntime_seconds();
         int achievement = ReadyActivity.runningItem.getAchievement();
         int calorie = ReadyActivity.runningItem.getCalorie();
         String default_title = ReadyActivity.runningItem.getTitle();
         int TimeperKm= ReadyActivity.runningItem.getPace_seconds(); //키로미터당 몇초 걸리는지 나옴
-        String pace_string = TimeperKm/60+"\'"+TimeperKm%60+"\'\'";
+        String paceString = TimeperKm/60+"\'"+TimeperKm%60+"\'\'";
 
         filename = ReadyActivity.runningItem.getFilename();
         Bitmap bm = BitmapFactory.decodeFile(filename);
@@ -204,38 +204,38 @@ public class MachineTodayActivity extends AppCompatActivity {
         }
         //수정되더라도 자연스럽게 반영되도록 resume에 넣었다
 
-        if(total_rest == 0){
-            today_consult = "가벼운 러닝";
-        }else if(total_rest == 1){
-            today_consult = "회복 러닝";
-        }else if(total_rest == 2){
-            today_consult = "스피드 러닝";
+        if(totalRest == 0){
+            todayConsult = "가벼운 러닝";
+        }else if(totalRest == 1){
+            todayConsult = "회복 러닝";
+        }else if(totalRest == 2){
+            todayConsult = "스피드 러닝";
         }else{
-            today_consult = "하드 러닝";
+            todayConsult = "하드 러닝";
         }
 
-        if(total_rest == 100){
-            consulting_is.setText("");
+        if(totalRest == 100){
+            consultingIs.setText("");
             consulting.setText("");//저장된 값이 없다고 간주되면 빈칸으로 나둔다
         }else{
-            consulting.setText(today_consult+" (총 휴식 횟수 "+total_rest+"회)");
+            consulting.setText(todayConsult+" (총 휴식 횟수 "+totalRest+"회)");
         }
 
-        String time_set = time_r/60+"분 "+time_r%60+"초";
-        time_this.setText(time_set);
-        calorie_this.setText(String.valueOf(calorie));
+        String timeSet = timeR/60+"분 "+timeR%60+"초";
+        timeThis.setText(timeSet);
+        calorieThis.setText(String.valueOf(calorie));
 
         if(achievement>0){
-            achievement_thismuch.setText(String.valueOf(achievement)+"%");
+            achievementThismuch.setText(String.valueOf(achievement)+"%");
         }else{
-            achievement_thismuch.setText("");
-            achievement_is.setText("");//빈칸으로 나둔다.
+            achievementThismuch.setText("");
+            achievementIs.setText("");//빈칸으로 나둔다.
         }
         toolbar.setTitle(ReadyActivity.runningItem.getDate());
 
-        pace_this.setText(pace_string);
+        paceThis.setText(paceString);
         title.setText("제목: "+default_title);
-        today_distance.setText(String.format("%.2f",distance)+" km");
+        todayDistance.setText(String.format("%.2f",distance)+" km");
 
         Log.e(TAG, "onResume: 아이템이 "+ReadyActivity.runningItem );
     }
