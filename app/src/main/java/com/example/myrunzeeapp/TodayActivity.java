@@ -327,7 +327,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         int timeR = runningItem.getRuntime_seconds();
         int achievement = runningItem.getAchievement();
         int calorie = runningItem.getCalorie();
-        String default_title = runningItem.getTitle();
+        String defaultTitle = runningItem.getTitle();
         int TimeperKm= runningItem.getPace_seconds(); //키로미터당 몇초 걸리는지 나옴
         String paceString = TimeperKm/60+"\'"+TimeperKm%60+"\'\'";
 
@@ -344,7 +344,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         timeThis.setText(timeSet);
         calorieThis.setText(String.valueOf(calorie));
         paceThis.setText(paceString);
-        title.setText("제목: "+default_title);
+        title.setText("제목: "+defaultTitle);
         todayDistance.setText(String.format("%.2f",distance)+" km");
     }
 
