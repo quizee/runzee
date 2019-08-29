@@ -139,7 +139,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
         //그 친구들의 정보를 리사이클러뷰 리스트에 넣는다.
         //이미 기존에 추가되었던 친구인지 아닌지에 따라 다른 처리를 해준다.
-
         userListRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -76,7 +76,9 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
     //구글 맵 움직이게 하기
     Handler mapHandler = new Handler();
     int pointCount = 0;
-    ArrayList<LatLng> trakerPoints = ReadyActivity.runningItem.getTrakerPoints(); //움직인 좌표들
+
+    RunningItem runningItem = ReadyActivity.runningItem;
+    ArrayList<LatLng> trakerPoints = runningItem.getTrakerPoints(); //움직인 좌표들
 
     public double returnLatFromIndex(int index){
         return trakerPoints.get(index).latitude;
@@ -92,8 +94,9 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         final MarkerOptions markerOptions = new MarkerOptions();//출발을 위한 마커
         final MarkerOptions markerOptions2 = new MarkerOptions();//도착을 위한 마커
 
-        double startLat = returnLatFromIndex(0);//출발지
-        double startLon = returnLonFromIndex(0);
+        int startIndex = 0;
+        double startLat = returnLatFromIndex(startIndex);//출발지
+        double startLon = returnLonFromIndex(startIndex);
         LatLng From = new LatLng(startLat,startLon);
         markerOptions.position(From);//출발 marker 설정
         markerOptions.title("출발");
@@ -104,8 +107,9 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
         int lastIndex = trakerPoints.size() -1;//도착지
-        LatLng To = new LatLng(returnLatFromIndex(lastIndex),returnLonFromIndex(lastIndex));
-
+        double LastLat = returnLatFromIndex(lastIndex);
+        double LastLon = returnLonFromIndex(lastIndex);
+        LatLng To = new LatLng(LastLat,LastLon);
         markerOptions2.position(To);
         markerOptions2.title("도착");
 
@@ -132,7 +136,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
     private class DrawPoly implements Runnable{
         @Override
         public void run() {
-            if(ReadyActivity.runningItem != null && trakerPoints != null) {
+            if(runningItem != null && trakerPoints != null) {
                 while (pointCount < trakerPoints.size() - 2) {
                     mapHandler.post(new Runnable() {
                         @Override
@@ -159,7 +163,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK && requestCode==2){
             Log.e(TAG, "onActivityResult: 수정된 아이템을 받는다");
-            ReadyActivity.runningItem.setModified(true);//변경되었음
+            runningItem.setModified(true);//변경되었음
         }
     }
 
@@ -208,9 +212,9 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
                     case R.id.go_record:
                         Intent intent1 = new Intent(TodayActivity.this,RecordActivity.class);
 
-                        if(RecordActivity.justWatching&&!ReadyActivity.runningItem.getModified()){
+                        if(RecordActivity.justWatching&&!runningItem.getModified()){
                             //삭제를 시킬 때는 이 버튼을 누를 일이 없다.단 수정을 할 때는 이 버튼을 누르기 때문에 예외처리
-                            ReadyActivity.runningItem = null;
+                            runningItem = null;
                         }
                         intent1.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(intent1);
@@ -234,7 +238,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         consultingIs = findViewById(R.id.consultingIs);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(ReadyActivity.runningItem.getDate());
+        toolbar.setTitle(runningItem.getDate());
         setSupportActionBar(toolbar);
         certification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,7 +278,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TodayActivity.this, TakePhotoActivity.class);
-                intent.putExtra("howmuchTIme",ReadyActivity.runningItem.getRuntime_seconds());
+                intent.putExtra("howmuchTIme",runningItem.getRuntime_seconds());
                 intent.putExtra("editing_picture",true);
                 startActivity(intent);//takePhotoActivity로 넘어가서 사진 촬영
                 d.dismiss();
@@ -318,16 +322,16 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
         super.onResume();
 
         //화면 초기화를 위한 변수들
-        double distance = ReadyActivity.runningItem.getKm();
-        int totalRest = ReadyActivity.runningItem.getRest_count();
-        int timeR = ReadyActivity.runningItem.getRuntime_seconds();
-        int achievement = ReadyActivity.runningItem.getAchievement();
-        int calorie = ReadyActivity.runningItem.getCalorie();
-        String default_title = ReadyActivity.runningItem.getTitle();
-        int TimeperKm= ReadyActivity.runningItem.getPace_seconds(); //키로미터당 몇초 걸리는지 나옴
+        double distance = runningItem.getKm();
+        int totalRest = runningItem.getRest_count();
+        int timeR = runningItem.getRuntime_seconds();
+        int achievement = runningItem.getAchievement();
+        int calorie = runningItem.getCalorie();
+        String default_title = runningItem.getTitle();
+        int TimeperKm= runningItem.getPace_seconds(); //키로미터당 몇초 걸리는지 나옴
         String paceString = TimeperKm/60+"\'"+TimeperKm%60+"\'\'";
 
-        filename = ReadyActivity.runningItem.getFilename();
+        filename = runningItem.getFilename();
         Bitmap bm = BitmapFactory.decodeFile(filename);
 
         if(filename!=null) {
@@ -347,7 +351,7 @@ public class TodayActivity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause: 아이템이 "+ReadyActivity.runningItem );
+        Log.e(TAG, "onPause: 아이템이 "+runningItem );
     }
 
     @Override
